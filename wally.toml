@@ -1,0 +1,16 @@
+[package]
+name = "superleague/wise-3d"
+version = "0.1.0"
+registry = "https://github.com/UpliftGames/wally-index"
+realm = "shared"
+
+[place]
+shared-packages = "game.ReplicatedStorage.Packages"
+
+[dependencies]
+Replicator = "remnantsofsiren/replicator2@1.2.6"
+Cardinal = "remnantsofsiren/cardinal@1.7.2"
+Promise = "evaera/promise@4.0.0"
+
+[server-dependencies]
+DataKeep = "noahrepublic/datakeep@5.0.0"

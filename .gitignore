@@ -1,0 +1,20 @@
+# Project place file
+/Wise3D.rbxlx
+
+# Roblox Studio lock files
+/*.rbxlx.lock
+/*.rbxl.lock
+
+# Wally packages
+Packages
+ServerPackages
+
+# Optional TOMLs
+selene.toml
+
+#Locks / Sourcemap
+*.lock
+sourcemap.json
+
+# Settings
+.vscode

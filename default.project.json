@@ -1,0 +1,52 @@
+{
+  "name": "Wise3D",
+  "tree": {
+    "$className": "DataModel",
+    
+    "ReplicatedStorage": {
+      "$path": "src/ReplicatedStorage",
+      "$ignoreUnknownInstances": true,
+
+      "Client": {
+        "$path": "src/Client"
+      },
+
+      "Shared": {
+        "$path": "src/Shared"
+      },
+      
+      "Packages": {
+        "$path": "Packages"
+      }
+    },   
+    
+    "ServerScriptService": {
+      "Initialize": {
+        "$path": "src/Initialize.server.luau",
+        "$ignoreUnknownInstances": true
+      }
+    },
+
+    "ServerStorage": {
+      "$ignoreUnknownInstances": true,
+
+      "Server": {
+        "$path": "src/Server"
+      },
+      
+      "Packages": {
+        "$path": "ServerPackages"
+      }
+    },
+    
+    "StarterPlayer": {
+      "StarterPlayerScripts": {
+        "$ignoreUnknownInstances": true,
+
+        "Initialize": {
+          "$path": "src/Initialize.client.luau"
+        }
+      }
+    }
+  }
+}
