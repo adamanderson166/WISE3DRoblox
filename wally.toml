@@ -1,5 +1,5 @@
 [package]
-name = "wise-3d"
+name = "roblox/wise-3d"
 version = "0.1.0"
 registry = "https://github.com/UpliftGames/wally-index"
 realm = "shared"
