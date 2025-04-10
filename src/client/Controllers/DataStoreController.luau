@@ -1,6 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local Replicator = require(ReplicatedStorage.Packages.Replicator).Client
+local Replicator = require(ReplicatedStorage.Packages.Replicator)
 
 local Controller = {}
 

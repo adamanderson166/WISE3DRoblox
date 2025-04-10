@@ -7,7 +7,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local DataKeep = require(ServerStorage.Packages.DataKeep)
 local Promise = require(ReplicatedStorage.Packages.Promise)
-local Replicator = require(ReplicatedStorage.Packages.Replicator).Server
+local Replicator = require(ReplicatedStorage.Packages.Replicator)
 
 local Store
 
@@ -53,7 +53,7 @@ function Service:OnPlayerAdded(Player: Player)
 			To = Player,
 		})
 
-		Replica:AddCleanupTask(function()
+		Replica:AddCleanupMethod(function()
 			Keep:Release()
 		end)
 

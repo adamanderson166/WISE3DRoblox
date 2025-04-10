@@ -8,7 +8,7 @@ realm = "shared"
 shared-packages = "game.ReplicatedStorage.Packages"
 
 [dependencies]
-Replicator = "remnantsofsiren/replicator2@1.2.6"
+Replicator = "remnantsofsiren/replicator2@1.3.7"
 Cardinal = "remnantsofsiren/cardinal@1.7.2"
 Promise = "evaera/promise@4.0.0"
 
