@@ -1,17 +1,21 @@
 --!strict
 --!optimize 2
 
+-- Services
 local RunService = game:GetService("RunService")
 local ServerStorage = game:GetService("ServerStorage")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+-- Packages
 local DataKeep = require(ServerStorage.Packages.DataKeep)
 local Promise = require(ReplicatedStorage.Packages.Promise)
 local Replicator = require(ReplicatedStorage.Packages.Replicator)
 
 local Store
-
-local Template = {}
+local Template = {
+	Level = 0,
+	Xp = 0,
+}
 
 type Replica = {
 	[unknown]: unknown,
@@ -19,10 +23,12 @@ type Replica = {
 	Destroy: (Replica) -> (),
 }
 
-local Service = {}
 local Replicas: { [Player]: Replica } = {}
 
-function Service:OnInit()
+--
+local PlayerDataService = {}
+
+function PlayerDataService:OnInit()
 	Store = DataKeep.GetStore("PlayerData", Template, {}):expect()
 
 	if RunService:IsStudio() then -- Causes the Data in Studio to be "fresh" i.e Mock data
@@ -30,9 +36,9 @@ function Service:OnInit()
 	end
 end
 
-function Service:OnPlayerAdded(Player: Player)
+function PlayerDataService:OnPlayerAdded(Player: Player)
 	local UserId = if Player.UserId > 0 then Player.UserId else 4062748404 -- stupid use case for studio testing (you can change this if you choose)
-	
+
 	Store:LoadKeep(`User_{UserId}`):andThen(function(Keep)
 		if Keep == nil then
 			Player:Kick("Data locked")
@@ -61,26 +67,28 @@ function Service:OnPlayerAdded(Player: Player)
 	end)
 end
 
-function Service:Get(Player: Player, Async: number?)
+function PlayerDataService:Get(Player: Player, Async: number?)
 	local Replica = Replicas[Player]
 
-	return if not Async then Replica else Promise.new(function(Resolve, Reject) 
-		if Replica then
-			return Resolve(Replica)
-		end
-		
-		local Start = tick()
-		
-		repeat
-			Replica = Replicas[Player]
-			task.wait()
-		until Replica or tick() - Start >= Async
-	
-		return if not Replica then Reject("Timed out trying to find player's Replica") else Resolve(Replica)
-	end)
+	return if not Async
+		then Replica
+		else Promise.new(function(Resolve, Reject)
+			if Replica then
+				return Resolve(Replica)
+			end
+
+			local Start = tick()
+
+			repeat
+				Replica = Replicas[Player]
+				task.wait()
+			until Replica or tick() - Start >= Async
+
+			return if not Replica then Reject("Timed out trying to find player's Replica") else Resolve(Replica)
+		end)
 end
 
-function Service:OnPlayerRemoving(Player: Player)
+function PlayerDataService:OnPlayerRemoving(Player: Player)
 	local Replica: Replica = Replicas[Player]
 
 	if Replica then
@@ -89,4 +97,4 @@ function Service:OnPlayerRemoving(Player: Player)
 	end
 end
 
-return Service
+return PlayerDataService

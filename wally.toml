@@ -11,6 +11,8 @@ shared-packages = "game.ReplicatedStorage.Packages"
 Replicator = "remnantsofsiren/replicator2@1.3.7"
 Cardinal = "remnantsofsiren/cardinal@1.7.2"
 Promise = "evaera/promise@4.0.0"
+LemonSignal = "data-oriented-house/lemonsignal@1.10.0"
+TableUtil = "sleitnick/table-util@1.2.1"
 
 [server-dependencies]
 DataKeep = "noahrepublic/datakeep@5.0.0"
