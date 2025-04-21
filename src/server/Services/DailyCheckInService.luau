@@ -19,15 +19,25 @@ function DailyCheckInService.Client:CheckIn(player: Player)
 		end
 
 		local data: table = replica.Data:Get()
-		local currentTime: number = workspace:GetServerTimeNow()
 
-		print(os.date("%c", currentTime))
+		local LastCheckInTimeStamp: number = data.LastCheckInTimeStamp
 
-		-- If player comes back within a day, increment the streak
-		-- Otherwise, reset the streak to 1
-		local inTime: boolean = currentTime - data.LastCheckInTimestamp < SECONDS_IN_A_DAY
+		-- First time checking in, set the streak to 1
+		if LastCheckInTimeStamp == 0 then
+			PlayerDataService:UpdatePlayerStreak(player, 1, os.time())
+			return
+		end
 
-		PlayerDataService:UpdatePlayerStreak(player, inTime and (data.DailyCheckInStreak + 1) or 1, currentTime)
+		local currentTime: number = os.time()
+		local timeDifferenceInDays: number = math.floor((currentTime - LastCheckInTimeStamp) / SECONDS_IN_A_DAY)
+
+		-- Player came back the next day, increment the streak by 1
+		if timeDifferenceInDays == 1 then
+			PlayerDataService:UpdatePlayerStreak(player, data.DailyCheckInStreak + 1, currentTime)
+		elseif timeDifferenceInDays > 1 then
+			-- Player came back after more than a day, reset the streak to 1
+			PlayerDataService:UpdatePlayerStreak(player, 1, currentTime)
+		end
 	end)
 end
 

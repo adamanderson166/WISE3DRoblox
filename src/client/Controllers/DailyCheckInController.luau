@@ -21,7 +21,7 @@ function DailyCheckInController:OnStart()
 	DailyCheckInService = Cardinal.GetService("DailyCheckInService")
 
 	PlayerDataController:ObserveChange("DailyCheckInStreak", function(streak: number)
-		print(`Daily Streak : {streak}`)
+		--print(`Daily Streak : {streak}`)
 	end)
 end
 
