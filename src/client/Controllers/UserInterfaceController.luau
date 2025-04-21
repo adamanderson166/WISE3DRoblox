@@ -10,9 +10,6 @@ local Promise = require(Packages.Promise)
 -- References
 local LocalPlayer = Players.LocalPlayer
 
--- Variables
-local Interfaces = {}
-
 --
 local UserInterfaceController = {}
 

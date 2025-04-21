@@ -15,6 +15,8 @@ local Store
 local Template = {
 	Level = 0,
 	Xp = 0,
+	DailyCheckInStreak = 0,
+	LastCheckInTimestamp = 0,
 }
 
 type Replica = {
@@ -95,6 +97,12 @@ function PlayerDataService:OnPlayerRemoving(Player: Player)
 		Replica:Destroy()
 		Replicas[Player] = nil
 	end
+end
+
+function PlayerDataService:UpdatePlayerStreak(player: Player, streakNumber: number, timeStamp: number)
+	local replica: table = self:Get(player)
+	replica.Data.DailyCheckInStreak = streakNumber
+	replica.Data.LastCheckInTimestamp = timeStamp
 end
 
 return PlayerDataService

@@ -13,6 +13,8 @@ Cardinal = "remnantsofsiren/cardinal@1.7.2"
 Promise = "evaera/promise@4.0.0"
 LemonSignal = "data-oriented-house/lemonsignal@1.10.0"
 TableUtil = "sleitnick/table-util@1.2.1"
+Component = "sleitnick/component@2.4.8"
+Trove = "sleitnick/trove@1.5.0"
 
 [server-dependencies]
 DataKeep = "noahrepublic/datakeep@5.0.0"

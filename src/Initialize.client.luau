@@ -4,6 +4,8 @@ local Cardinal = require(ReplicatedStorage.Packages.Cardinal)
 
 Cardinal.Load(ReplicatedStorage.Client.Controllers)
 
-Cardinal.Start():andThen(function() 
-    print("Client Loaded")
+Cardinal.Start():andThen(function()
+	print("Client Loaded")
 end)
+
+Cardinal.Load(ReplicatedStorage.Client.Components)
