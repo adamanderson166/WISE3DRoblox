@@ -16,8 +16,8 @@ function JournalController:SubmitJournal() end
 function JournalController:OnStart()
 	JournalService = Cardinal.GetService("JournalService")
 
-	local available = JournalService:JournalAvailable()
-    print(`Journal Available: {available}`)
+	local available: boolean = JournalService:JournalAvailable()
+	print(`Journal Available: {available}`)
 end
 
 return JournalController
