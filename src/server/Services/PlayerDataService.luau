@@ -17,6 +17,8 @@ local Template = {
 	Xp = 0,
 	DailyCheckInStreak = 0,
 	LastCheckInTimeStamp = 0,
+	LastJournalSubmissionTimeStamp = 0,
+	Journals = {},
 }
 
 type Replica = {
@@ -103,6 +105,12 @@ function PlayerDataService:UpdatePlayerStreak(player: Player, streakNumber: numb
 	local replica: table = self:Get(player)
 	replica.Data.DailyCheckInStreak = streakNumber
 	replica.Data.LastCheckInTimeStamp = timeStamp
+end
+
+function PlayerDataService:SubmitJournal(player: Player, journal: string, timeStamp: number)
+	local replica: table = self:Get(player)
+	replica.Data.Journals[#replica.Data.Journals + 1] = journal
+	replica.Data.LastJournalSubmissionTimeStamp = timeStamp
 end
 
 return PlayerDataService
