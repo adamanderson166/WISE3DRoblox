@@ -28,7 +28,7 @@ local function SetupUi()
 	Interface = playerGui:WaitForChild("Hud", 5)
 
 	if not Interface then
-		warn("Hud not found!")
+		warn("Hud ui not found!")
 	end
 
 	LeftPanel = Interface:WaitForChild("LeftPanel", 5)
