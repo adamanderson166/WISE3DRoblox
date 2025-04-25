@@ -1,6 +1,5 @@
 -- Services
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
 
 -- Packages
@@ -8,22 +7,39 @@ local Packages = ReplicatedStorage.Packages
 local Promise = require(Packages.Promise)
 
 -- References
-local LocalPlayer = Players.LocalPlayer
+local UiFolder = ReplicatedStorage.Client.Modules.Interface
+
+-- Variables
+local Interfaces: { [string]: ModuleScript } = {}
 
 --
 local UserInterfaceController = {}
 
 local function InitializeInterfaces()
-	local screens: { ScreenGui } = ReplicatedStorage.Assets.UI:WaitForChild("Screens", 5):GetChildren()
-	local playerGui: PlayerGui = LocalPlayer:WaitForChild("PlayerGui", 5)
-
-	for _, screen: ScreenGui in ipairs(screens) do
-		local interface: ScreenGui = screen:Clone()
-		interface.Parent = playerGui
+	for _, interface: ModuleScript in ipairs(UiFolder:GetChildren()) do
+		Interfaces[interface.Name] = require(interface)
+		Interfaces[interface.Name]:Init(UserInterfaceController)
 	end
 end
 
-function UserInterfaceController:AddHoverEffect(button: TextButton | ImageButton)
+function UserInterfaceController:GetInterface(interfaceName: string)
+	if not Interfaces[interfaceName] then
+		warn(`Interface {interfaceName} not found!`)
+		return
+	end
+
+	return Interfaces[interfaceName]
+end
+
+function UserInterfaceController:ShowInterface(interfaceName: string)
+	local interface = self:GetInterface(interfaceName)
+
+	if interface then
+		interface:Show()
+	end
+end
+
+function UserInterfaceController:AddHoverEffect(button: TextButton | ImageButton, resetEffectOnClick: boolean)
 	if not button:IsA("TextButton") and not button:IsA("ImageButton") then
 		warn("Expected textButton or imageButton for hover effect.")
 		return
@@ -46,6 +62,12 @@ function UserInterfaceController:AddHoverEffect(button: TextButton | ImageButton
 			})
 			:Play()
 	end)
+
+	if resetEffectOnClick then
+		button.Activated:Connect(function()
+			button.Size = size
+		end)
+	end
 end
 
 function UserInterfaceController:AddButtonClick(button: TextButton | ImageButton, callback: () -> (), sound: string)
