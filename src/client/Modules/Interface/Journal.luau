@@ -9,6 +9,7 @@ local LocalPlayer = Players.LocalPlayer
 -- Variables
 local Interface: ScreenGui
 local SubmitButton: ImageButton
+local JournalScrollingFrame: ScrollingFrame
 local JournalTextBox: TextBox
 local CloseButton: ImageButton
 
@@ -51,13 +52,31 @@ function Journal:Init(interfaceController)
 	Interface.Parent = playerGui
 
 	SubmitButton = Interface:FindFirstChild("SubmitButton", true)
+	JournalScrollingFrame = Interface:FindFirstChild("JournalScrollingFrame", true)
 	JournalTextBox = Interface:FindFirstChild("JournalTextBox", true)
 	CloseButton = Interface:FindFirstChild("CloseButton", true)
 
+	-- Update height of the text box based on the text content
+	local function updateTextHeight()
+		local textHeight: number = JournalTextBox.TextBounds.Y
+		local frameHeight: number = JournalScrollingFrame.AbsoluteSize.Y
+
+		local heightScale: number = textHeight / frameHeight
+
+		JournalTextBox.Size = UDim2.fromScale(0.98, heightScale)
+		JournalScrollingFrame.CanvasSize = UDim2.fromScale(0, heightScale)
+	end
+
 	JournalTextBox.ClearTextOnFocus = false
 
+	JournalTextBox:GetPropertyChangedSignal("Text"):Connect(function()
+		updateTextHeight()
+	end)
+
+	interfaceController:AddHoverEffect(CloseButton, true)
 	interfaceController:AddButtonClick(CloseButton, function()
 		self:Hide()
+		JournalTextBox.Text = ""
 		interfaceController:ShowInterface("Hud")
 	end)
 
