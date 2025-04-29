@@ -14,8 +14,9 @@ local JournalTextBox: TextBox
 local CloseButton: ImageButton
 
 -- Constants
-local MAX_JOURNAL_LENGTH: number = 400
-local MAX_CANVAS_SIZE_SCALE = 1.3
+local MIN_TEXT_SIZE = 14
+local MAX_TEXT_SIZE = 60
+local TEXT_SIZE_RATIO = 1 / 20
 
 --
 local Journal = {}
@@ -68,18 +69,16 @@ function Journal:Init(interfaceController)
 		local heightScale: number = textHeight / frameHeight
 
 		JournalTextBox.Size = UDim2.fromScale(0.98, heightScale)
-		JournalScrollingFrame.CanvasSize = UDim2.fromScale(0, math.clamp(heightScale, 0, MAX_CANVAS_SIZE_SCALE))
+		JournalScrollingFrame.CanvasSize = UDim2.fromScale(0, heightScale)
 	end
 
 	JournalTextBox.ClearTextOnFocus = false
 
+	local screenHeight: number = Interface.AbsoluteSize.Y
+	local targetSize = math.clamp(screenHeight * TEXT_SIZE_RATIO, MIN_TEXT_SIZE, MAX_TEXT_SIZE)
+	JournalTextBox.TextSize = targetSize
+
 	JournalTextBox:GetPropertyChangedSignal("Text"):Connect(function()
-		local textLength: number = #JournalTextBox.Text
-
-		if textLength > MAX_JOURNAL_LENGTH then
-			JournalTextBox.Text = JournalTextBox.Text:sub(1, MAX_JOURNAL_LENGTH)
-		end
-
 		updateTextHeight()
 	end)
 
