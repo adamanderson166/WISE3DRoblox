@@ -37,7 +37,7 @@ function Hud:ToggleLeftPanel()
 
 	if LeftPanelToggle then
 		leftPanelToggleButton.Rotation = 180
-		LeftPanel.Position = UDim2.fromScale(-0.062, 0.5)
+		LeftPanel.Position = UDim2.fromScale(-0.065, 0.5)
 
 		TweenService
 			:Create(LeftPanel, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out, 0, false, 0), {
