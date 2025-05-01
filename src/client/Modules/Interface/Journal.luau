@@ -11,7 +11,7 @@ local Interface: ScreenGui
 local SubmitButton: ImageButton
 local JournalScrollingFrame: ScrollingFrame
 local JournalTextBox: TextBox
-local CloseButton: ImageButton
+local CloseButton: TextButton
 
 -- Constants
 local MIN_TEXT_SIZE = 14
