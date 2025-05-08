@@ -21,7 +21,7 @@ local function SpawnChunks()
 		local zOffset: number = chunk:GetExtentsSize().Z - 0.1 -- Offset to avoid small spaces between chunks
 
 		-- Spawn chunks
-		for i = 1, CHUNKS_COUNT do
+		for i = 0, CHUNKS_COUNT do
 			table.insert(Chunks, Chunk:new(startingPosition, i, zOffset))
 		end
 	end)
