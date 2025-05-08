@@ -10,8 +10,12 @@ local DEBUG_POSITION = true
 
 --
 local Chunk = {}
+Chunk.__index = Chunk
 
 function Chunk:new(startingPosition: Vector3, index: number, offset: number)
+	local chunk: table = {}
+	setmetatable(chunk, Chunk)
+
 	-- Create a new instance of the Chunk model
 	local clone: Model = ReplicatedStorage.Assets.EndlessRunner.Chunk:Clone()
 	clone.Parent = workspace.EndlessRunner
@@ -33,15 +37,20 @@ function Chunk:new(startingPosition: Vector3, index: number, offset: number)
 		textLabel.Text = index
 	end
 
-	self._chunkModel = clone
-	self._trove = Trove.new()
+	chunk._chunkIndex = index
+	chunk._chunkModel = clone
 
-	local chunk: table = {}
-	setmetatable(chunk, self)
-
-	self.__index = self
+	chunk._trove = Trove.new()
 
 	return chunk
+end
+
+function Chunk:GetIndex()
+	return self._chunkIndex
+end
+
+function Chunk:GetModel()
+	return self._chunkModel
 end
 
 function Chunk:Populate()
