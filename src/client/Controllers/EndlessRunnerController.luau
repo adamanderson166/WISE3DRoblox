@@ -30,20 +30,24 @@ function EndlessRunnerController:SpawnChunks()
 
 		-- Spawn chunks
 		for i = 0, CHUNKS_COUNT do
-			table.insert(Chunks, Chunk:new(startingPosition, i, chunkLength))
+			table.insert(Chunks, Chunk:New(startingPosition, i, chunkLength))
 		end
 
-		-- Move chunks down the Z-axis
+		-- Move chunks down the Z-axis and check for recycling
 		self._trove:Add(RunService.Heartbeat:Connect(function(deltaTime: number)
-			for _, chunk in ipairs(Chunks) do
+			for _, chunk: table in ipairs(Chunks) do
 				local model: Model = chunk:GetModel()
 				model:PivotTo(model:GetPivot() + Vector3.new(0, 0, -CHUNK_MOVEMENT_SPEED * deltaTime))
 			end
 
+			-- Recycle the first chunk when it crosses threshold behind the player
 			if Chunks[1]:GetModel():GetPivot().Position.Z < threshold then
-				print("Chunk recycled: " .. Chunks[1]:GetIndex())
+				-- Remove the chunk from the list and clear it
 				local recycledChunk = table.remove(Chunks, 1)
-				recycledChunk:GetModel():Destroy()
+				recycledChunk:Clear()
+
+				recycledChunk:MoveToStepFromPosition(Chunks[#Chunks]:GetModel():GetPivot().Position, 1)
+				table.insert(Chunks, recycledChunk)
 			end
 		end))
 	end)
