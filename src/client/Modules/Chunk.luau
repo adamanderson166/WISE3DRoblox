@@ -6,7 +6,7 @@ local Packages = ReplicatedStorage.Packages
 local Trove = require(Packages.Trove)
 
 -- Constants
-local DEBUG_POSITION = true
+local DEBUG_POSITION = false
 
 --
 local Chunk = {}

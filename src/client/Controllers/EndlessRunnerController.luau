@@ -17,7 +17,7 @@ local Player: Player = Players.LocalPlayer
 -- Constants
 local CHUNKS_COUNT = 30
 local CHUNK_MOVEMENT_SPEED = 20
-local CHUNK_RECYCLE_THRESHOLD = 50
+local CHUNK_RECYCLE_THRESHOLD = 70
 local RUN_ANIM = "rbxassetid://2510198475"
 
 local MOVE_LEFT_KEYCODES = {
@@ -33,7 +33,10 @@ local MOVE_RIGHT_KEYCODES = {
 }
 
 -- Variables
+local Interface
 local CharacterController
+local UserInterfaceController
+
 local ChunksList: { table } = {}
 local CurrentLane: number = 0
 local PlayerLanes: { string: Vector3 } = {
@@ -50,6 +53,11 @@ function EndlessRunnerController:PopulateChunks()
 end
 
 function EndlessRunnerController:MoveChunks()
+	if #ChunksList == 0 then
+		warn("No chunks spawned!")
+		return
+	end
+
 	local threshold: number = (
 		ChunksList[1]:GetModel():GetPivot().Position - Vector3.new(0, 0, CHUNK_RECYCLE_THRESHOLD)
 	).Z
@@ -79,10 +87,10 @@ function EndlessRunnerController:SpawnChunks()
 
 		local startingPosition: Vector3 = chunkRef:GetPivot().Position
 
-		local chunkLength: number = chunkRef:GetExtentsSize().Z - 0.1 -- Offset to avoid small spaces between chunks
+		local chunkLength: number = chunkRef.MiddlePath.Size.Z - 0.1 -- Offset to avoid small spaces between chunks
 
 		-- Spawn chunks
-		for i = 0, CHUNKS_COUNT do
+		for i = 1, CHUNKS_COUNT do
 			table.insert(ChunksList, Chunk:New(startingPosition, i, chunkLength))
 		end
 	end)
@@ -140,25 +148,29 @@ function EndlessRunnerController:StartEndlessRunner()
 	-- Position Player on the first chunk and disable controls
 	CharacterController:ToggleControls(false)
 
-	local cFrame: CFrame = (CFrame.new(PlayerLanes[CurrentLane])) * CFrame.Angles(0, math.rad(180), 0) -- Adding slight offset
+	local cFrame: CFrame = (CFrame.new(PlayerLanes[CurrentLane])) * CFrame.Angles(0, math.rad(180), 0)
 
-	CharacterController:MoveToLocation(cFrame)
+	character:PivotTo(cFrame)
 
 	self:PopulateChunks()
 
+	UserInterfaceController:ShowInterface("Runner")
+
 	-- Display a countdown then start the game
+	Interface:StartCountdown(3):andThen(function()
+		CharacterController:PlayAnimation(RUN_ANIM)
 
-	CharacterController:PlayAnimation(RUN_ANIM)
+		self:MoveChunks()
 
-	task.wait(0.5)
-
-	self:MoveChunks()
-
-	self:ListenToInput()
+		self:ListenToInput()
+	end)
 end
 
 function EndlessRunnerController:OnStart()
 	CharacterController = require(ReplicatedStorage.Client.Controllers.CharacterController)
+	UserInterfaceController = require(ReplicatedStorage.Client.Controllers.UserInterfaceController)
+
+	Interface = UserInterfaceController:GetInterface("Runner")
 
 	task.delay(2, function()
 		self:StartEndlessRunner()
