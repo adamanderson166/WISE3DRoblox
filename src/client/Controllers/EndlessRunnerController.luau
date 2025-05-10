@@ -38,7 +38,10 @@ local CharacterController
 local UserInterfaceController
 
 local ChunksList: { table } = {}
+local TargetCFrame: CFrame = nil
+local PreviousLane: number = 0
 local CurrentLane: number = 0
+local SwitchingLanes: boolean = false
 local PlayerLanes: { string: Vector3 } = {
 	[1] = Vector3.zero,
 	[2] = Vector3.zero,
@@ -50,6 +53,12 @@ local EndlessRunnerController = {}
 
 function EndlessRunnerController:PopulateChunks()
 	-- Populate the chunks with obstacles and environment objects, skip the first two chunks so players dont run into them right away
+
+	for _, chunk: table in ipairs(ChunksList) do
+		if chunk:GetModel():GetAttribute("Position") > 2 then
+			chunk:Populate()
+		end
+	end
 end
 
 function EndlessRunnerController:MoveChunks()
@@ -82,23 +91,25 @@ function EndlessRunnerController:MoveChunks()
 end
 
 function EndlessRunnerController:SpawnChunks()
-	task.spawn(function()
-		local chunkRef: Model = ReplicatedStorage.Assets.EndlessRunner:WaitForChild("Chunk", 5)
+	local chunkRef: Model = ReplicatedStorage.Assets.EndlessRunner:WaitForChild("Chunk", 5)
 
-		local startingPosition: Vector3 = chunkRef:GetPivot().Position
+	local startingPosition: Vector3 = chunkRef:GetPivot().Position
 
-		local chunkLength: number = chunkRef.MiddlePath.Size.Z - 0.1 -- Offset to avoid small spaces between chunks
+	local chunkLength: number = chunkRef.MiddlePath.Size.Z - 0.1 -- Offset to avoid small spaces between chunks
 
-		-- Spawn chunks
-		for i = 1, CHUNKS_COUNT do
-			table.insert(ChunksList, Chunk:New(startingPosition, i, chunkLength))
-		end
-	end)
+	-- Spawn chunks
+	for i = 1, CHUNKS_COUNT do
+		table.insert(ChunksList, Chunk:New(startingPosition, i, chunkLength))
+	end
 end
 
 function EndlessRunnerController:ListenToInput()
 	self._trove:Add(UserInputService.InputBegan:Connect(function(input: InputObject, gameProcessed: boolean)
 		if gameProcessed then
+			return
+		end
+
+		if SwitchingLanes then
 			return
 		end
 
@@ -113,12 +124,17 @@ function EndlessRunnerController:ListenToInput()
 				CurrentLane = CurrentLane + 1
 			end
 		end
+
+		if CurrentLane ~= PreviousLane then
+			-- Move the player to the new lane
+			TargetCFrame = CFrame.new(PlayerLanes[CurrentLane]) * CFrame.Angles(0, math.rad(180), 0)
+			PreviousLane = CurrentLane
+			SwitchingLanes = true
+		end
 	end))
 end
 
-function EndlessRunnerController:StartEndlessRunner()
-	self:SpawnChunks()
-
+function EndlessRunnerController:SetupLanes()
 	local character: Model = Player.Character or Player.CharacterAdded:Wait()
 
 	PlayerLanes[1] = ChunksList[1]:GetModel().LeftPath.Front.WorldCFrame.Position
@@ -134,23 +150,35 @@ function EndlessRunnerController:StartEndlessRunner()
 		+ Vector3.new(0, character:GetExtentsSize().Y / 2, 0)
 
 	CurrentLane = 2 -- Middle lane
+	PreviousLane = 2
 
-	-- Position Player on the first chunk and disable controls
+	-- Position Player on the first chunk
+	TargetCFrame = (CFrame.new(PlayerLanes[CurrentLane])) * CFrame.Angles(0, math.rad(180), 0)
+	character:PivotTo(TargetCFrame)
+
+	-- Update player position depending on the current lane and if targetCFrame is set
+	self._trove:Add(RunService.RenderStepped:Connect(function(deltaTime: number)
+		if not TargetCFrame then
+			return
+		end
+
+		local characterCFrame: CFrame = character:GetPivot()
+		local targetCFrame: CFrame = characterCFrame:Lerp(TargetCFrame, 0.05)
+		character:PivotTo(targetCFrame)
+
+		-- Player reached the target position
+		if (characterCFrame.Position - TargetCFrame.Position).Magnitude < 0.1 then
+			TargetCFrame = nil
+			SwitchingLanes = false
+		end
+	end))
+end
+
+function EndlessRunnerController:StartEndlessRunner()
 	CharacterController:ToggleControls(false)
 
-	local startingCFrame: CFrame = (CFrame.new(PlayerLanes[CurrentLane])) * CFrame.Angles(0, math.rad(180), 0)
-
-	character:PivotTo(startingCFrame)
-
-	self._trove:Add(RunService.RenderStepped:Connect(function(deltaTime: number)
-		local characterCFrame: CFrame = character:GetPivot()
-
-		local targetCFrame: CFrame =
-			characterCFrame:Lerp(CFrame.new(PlayerLanes[CurrentLane]) * CFrame.Angles(0, math.rad(180), 0), 0.05)
-
-		character:PivotTo(targetCFrame)
-	end))
-
+	self:SpawnChunks()
+	self:SetupLanes()
 	self:PopulateChunks()
 
 	UserInterfaceController:ShowInterface("Runner")
