@@ -167,14 +167,14 @@ function EndlessRunnerController:SetupLanes()
 		character:PivotTo(targetCFrame)
 
 		-- Player reached the target position
-		if (characterCFrame.Position - TargetCFrame.Position).Magnitude < 0.1 then
+		if (characterCFrame.Position - TargetCFrame.Position).Magnitude < 1 then
 			TargetCFrame = nil
 			SwitchingLanes = false
 		end
 	end))
 end
 
-function EndlessRunnerController:StartEndlessRunner()
+function EndlessRunnerController:StartGame()
 	CharacterController:ToggleControls(false)
 
 	self:SpawnChunks()
@@ -200,7 +200,7 @@ function EndlessRunnerController:OnStart()
 	Interface = UserInterfaceController:GetInterface("Runner")
 
 	task.delay(2, function()
-		self:StartEndlessRunner()
+		self:StartGame()
 	end)
 end
 
