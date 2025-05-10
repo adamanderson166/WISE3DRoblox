@@ -106,21 +106,11 @@ function EndlessRunnerController:ListenToInput()
 			-- Move player left
 			if CurrentLane > 1 then
 				CurrentLane = CurrentLane - 1
-
-				CharacterController:MoveToLocation(
-					CFrame.new(PlayerLanes[CurrentLane]) * CFrame.Angles(0, math.rad(180), 0),
-					true
-				)
 			end
 		elseif table.find(MOVE_RIGHT_KEYCODES, input.KeyCode) then
 			-- Move player right
 			if CurrentLane < 3 then
 				CurrentLane = CurrentLane + 1
-
-				CharacterController:MoveToLocation(
-					CFrame.new(PlayerLanes[CurrentLane]) * CFrame.Angles(0, math.rad(180), 0),
-					true
-				)
 			end
 		end
 	end))
@@ -148,9 +138,18 @@ function EndlessRunnerController:StartEndlessRunner()
 	-- Position Player on the first chunk and disable controls
 	CharacterController:ToggleControls(false)
 
-	local cFrame: CFrame = (CFrame.new(PlayerLanes[CurrentLane])) * CFrame.Angles(0, math.rad(180), 0)
+	local startingCFrame: CFrame = (CFrame.new(PlayerLanes[CurrentLane])) * CFrame.Angles(0, math.rad(180), 0)
 
-	character:PivotTo(cFrame)
+	character:PivotTo(startingCFrame)
+
+	self._trove:Add(RunService.RenderStepped:Connect(function(deltaTime: number)
+		local characterCFrame: CFrame = character:GetPivot()
+
+		local targetCFrame: CFrame =
+			characterCFrame:Lerp(CFrame.new(PlayerLanes[CurrentLane]) * CFrame.Angles(0, math.rad(180), 0), 0.05)
+
+		character:PivotTo(targetCFrame)
+	end))
 
 	self:PopulateChunks()
 
