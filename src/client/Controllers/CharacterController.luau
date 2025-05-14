@@ -25,12 +25,21 @@ function CharacterController:PlayAnimation(animId: string)
 	animation.AnimationId = animId
 
 	self._animation = humanoid.Animator:LoadAnimation(animation)
-	self._animation:Play(0, 1, 1.5)
+	self._animation:Play(1, 1, 1.5)
 end
 
 function CharacterController:MoveToLocation(location: Vector3 | CFrame)
 	local character: Model = Player.Character or Player.CharacterAdded:Wait()
 	character:PivotTo(typeof(location) == "CFrame" and location or CFrame.new(location))
+end
+
+function CharacterController:Jump()
+	local character: Model = Player.Character or Player.CharacterAdded:Wait()
+	local humanoid: Humanoid = character.Humanoid
+
+	if humanoid then
+		humanoid.Jump = true
+	end
 end
 
 function CharacterController:ToggleControls(toggle: boolean)

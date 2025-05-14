@@ -19,6 +19,7 @@ local CHUNKS_COUNT = 30
 local CHUNK_MOVEMENT_SPEED = 20
 local CHUNK_RECYCLE_THRESHOLD = 70
 local RUN_ANIM = "rbxassetid://2510198475"
+local JUMP_ANIM = "rbxassetid://2510197830"
 
 local MOVE_LEFT_KEYCODES = {
 	Enum.KeyCode.A,
@@ -109,6 +110,10 @@ function EndlessRunnerController:ListenToInput()
 			return
 		end
 
+		if input.KeyCode == Enum.KeyCode.F then
+			CharacterController:PlayAnimation(RUN_ANIM)
+		end
+
 		if SwitchingLanes then
 			return
 		end
@@ -130,6 +135,8 @@ function EndlessRunnerController:ListenToInput()
 			TargetCFrame = CFrame.new(PlayerLanes[CurrentLane]) * CFrame.Angles(0, math.rad(180), 0)
 			PreviousLane = CurrentLane
 			SwitchingLanes = true
+			CharacterController:PlayAnimation(JUMP_ANIM)
+			CharacterController:Jump()
 		end
 	end))
 end
@@ -169,6 +176,11 @@ function EndlessRunnerController:SetupLanes()
 		-- Player reached the target position
 		if (characterCFrame.Position - TargetCFrame.Position).Magnitude < 1 then
 			TargetCFrame = nil
+
+			if SwitchingLanes then
+				CharacterController:PlayAnimation(RUN_ANIM)
+			end
+
 			SwitchingLanes = false
 		end
 	end))
