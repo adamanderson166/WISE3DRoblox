@@ -24,13 +24,12 @@ function DailyStreakTerminal:Start()
 
 	local proximityPrompt: ProximityPrompt = Instance.new("ProximityPrompt")
 	proximityPrompt.ActionText = "Daily Check In"
-	proximityPrompt.MaxActivationDistance = 15
+	proximityPrompt.MaxActivationDistance = 10
 	proximityPrompt.RequiresLineOfSight = false
 	proximityPrompt.HoldDuration = 0
 	proximityPrompt.Enabled = true
 
-	local tablePart: BasePart = self.Instance:WaitForChild("Table", 5)
-	proximityPrompt.Parent = tablePart
+	proximityPrompt.Parent = self.Instance
 
 	proximityPrompt.Triggered:Connect(function()
 		-- Daily check in

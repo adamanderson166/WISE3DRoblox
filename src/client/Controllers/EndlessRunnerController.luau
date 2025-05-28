@@ -212,7 +212,7 @@ function EndlessRunnerController:OnStart()
 	Interface = UserInterfaceController:GetInterface("Runner")
 
 	task.delay(2, function()
-		self:StartGame()
+		-- self:StartGame()
 	end)
 end
 

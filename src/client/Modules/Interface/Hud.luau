@@ -79,6 +79,12 @@ function Hud:Init(interfaceController)
 	for _, button: ImageButton in ipairs(buttons) do
 		interfaceController:AddHoverEffect(button, true)
 		interfaceController:AddButtonClick(button, function()
+			-- Just adding a check to prevent opening settings or achievements
+			-- ToDo: Remove later
+			if button.Name == "Settings" or button.Name == "Achievements" then
+				return
+			end
+
 			self:Hide()
 			interfaceController:ShowInterface(button.Name)
 		end)

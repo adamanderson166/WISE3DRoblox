@@ -13,7 +13,13 @@ local DailyCheckInService
 local DailyCheckInController = {}
 
 function DailyCheckInController:CheckIn()
-	DailyCheckInService:CheckIn()
+	local status: string = DailyCheckInService:CheckIn()
+
+	if status == "Success" then
+		print("Daily check-in successful!")
+	elseif status == "AlreadyCheckedIn" then
+		print("You have already checked in today.")
+	end
 end
 
 function DailyCheckInController:OnStart()
