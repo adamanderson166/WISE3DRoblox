@@ -8,6 +8,7 @@ local Cardinal = require(Packages.Cardinal)
 -- Variables
 local PlayerDataController
 local DailyCheckInService
+local NotificationController
 
 --
 local DailyCheckInController = {}
@@ -15,15 +16,18 @@ local DailyCheckInController = {}
 function DailyCheckInController:CheckIn()
 	local status: string = DailyCheckInService:CheckIn()
 
-	if status == "Success" then
-		print("Daily check-in successful!")
+	if status == "Success" or status == "FirstCheckIn" then
+		NotificationController:Notify("Daily check-in successful!")
 	elseif status == "AlreadyCheckedIn" then
-		print("You have already checked in today.")
+		NotificationController:Notify("You have already checked in today.")
 	end
+
+	return status
 end
 
 function DailyCheckInController:OnStart()
 	PlayerDataController = require(ReplicatedStorage.Client.Controllers.PlayerDataController)
+	NotificationController = require(ReplicatedStorage.Client.Controllers.NotificationController)
 	DailyCheckInService = Cardinal.GetService("DailyCheckInService")
 
 	PlayerDataController:ObserveChange("DailyCheckInStreak", function(streak: number)

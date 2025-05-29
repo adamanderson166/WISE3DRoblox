@@ -11,6 +11,7 @@ local TroveAdder = require(ReplicatedStorage.Shared.Modules.ComponentExtensions.
 
 -- Variables
 local DailyCheckInController
+local DailyCheckInService
 
 --
 local DailyStreakTerminal = Component.new({
@@ -21,18 +22,19 @@ local DailyStreakTerminal = Component.new({
 
 function DailyStreakTerminal:Start()
 	DailyCheckInController = require(ReplicatedStorage.Client.Controllers.DailyCheckInController)
+	DailyCheckInService = Cardinal.GetService("DailyCheckInService")
 
 	local proximityPrompt: ProximityPrompt = Instance.new("ProximityPrompt")
 	proximityPrompt.ActionText = "Daily Check In"
 	proximityPrompt.MaxActivationDistance = 10
 	proximityPrompt.RequiresLineOfSight = false
 	proximityPrompt.HoldDuration = 0
-	proximityPrompt.Enabled = true
+	proximityPrompt.Enabled = DailyCheckInService:GetCheckInStatus() ~= "AlreadyCheckedIn"
 
 	proximityPrompt.Parent = self.Instance
 
 	proximityPrompt.Triggered:Connect(function()
-		-- Daily check in
+		proximityPrompt.Enabled = false
 		DailyCheckInController:CheckIn()
 	end)
 end
