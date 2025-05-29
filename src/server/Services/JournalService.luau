@@ -57,7 +57,7 @@ function JournalService.Client:SubmitJournal(player: Player, journal: string)
 
 	local currentTime: number = os.time()
 
-	PlayerDataService:UpdatePlayerJournal(player, journal, currentTime)
+	PlayerDataService:SubmitJournal(player, journal, currentTime)
 end
 
 function JournalService:OnStart()

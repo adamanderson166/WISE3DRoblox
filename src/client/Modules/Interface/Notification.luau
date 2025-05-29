@@ -19,7 +19,7 @@ local NOTIFICATION_DURATION = 4
 --
 local Notification = {}
 
-function Notification:Notify(notificationText: string)
+function Notification:Notify(notificationText: string, duration: number)
 	local notificationFrame: Frame = Interface:FindFirstChild("NotificationFrame", true):Clone()
 	notificationFrame.Parent = Interface
 	notificationFrame.NotificationText.Text = notificationText
@@ -31,7 +31,7 @@ function Notification:Notify(notificationText: string)
 		Position = UDim2.fromScale(0.5, 0.98),
 	}):Play()
 
-	task.delay(NOTIFICATION_DURATION, function()
+	task.delay(duration and duration or NOTIFICATION_DURATION, function()
 		local tween: TweenBase =
 			TweenService:Create(notificationFrame, TweenInfo.new(1, Enum.EasingStyle.Linear, Enum.EasingDirection.In), {
 				Position = UDim2.fromScale(0.5, 2),

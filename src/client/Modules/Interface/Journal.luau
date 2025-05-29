@@ -7,6 +7,8 @@ local TweenService = game:GetService("TweenService")
 local LocalPlayer = Players.LocalPlayer
 
 -- Variables
+local JournalController
+
 local Interface: ScreenGui
 local SubmitButton: ImageButton
 local JournalScrollingFrame: ScrollingFrame
@@ -41,9 +43,12 @@ function Journal:Hide()
 	):Play()
 
 	Interface.Enabled = false
+	JournalTextBox.Text = ""
 end
 
 function Journal:Init(interfaceController)
+	JournalController = require(ReplicatedStorage.Client.Controllers.JournalController)
+
 	local playerGui: PlayerGui = LocalPlayer:WaitForChild("PlayerGui", 5)
 
 	local screen: ScreenGui = ReplicatedStorage.Assets.UI.Screens:WaitForChild("Journal", 5)
@@ -85,13 +90,12 @@ function Journal:Init(interfaceController)
 	interfaceController:AddHoverEffect(CloseButton, true)
 	interfaceController:AddButtonClick(CloseButton, function()
 		self:Hide()
-		JournalTextBox.Text = ""
 		interfaceController:ShowInterface("Hud")
 	end)
 
 	interfaceController:AddHoverEffect(SubmitButton, true)
 	interfaceController:AddButtonClick(SubmitButton, function()
-		--JournalController:SubmitJournal()
+		JournalController:SubmitJournal(JournalTextBox.Text)
 	end)
 end
 
