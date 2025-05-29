@@ -14,9 +14,9 @@ local Interface
 --
 local NotificationController = {}
 
-function NotificationController:Notify(notificationText: string)
+function NotificationController:Notify(notificationText: string, duration: number?)
 	if Interface then
-		Interface:Notify(notificationText)
+		Interface:Notify(notificationText, duration)
 	end
 end
 

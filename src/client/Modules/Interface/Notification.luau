@@ -19,7 +19,7 @@ local NOTIFICATION_DURATION = 4
 --
 local Notification = {}
 
-function Notification:Notify(notificationText: string, duration: number)
+function Notification:Notify(notificationText: string, duration: number?)
 	local notificationFrame: Frame = Interface:FindFirstChild("NotificationFrame", true):Clone()
 	notificationFrame.Parent = Interface
 	notificationFrame.NotificationText.Text = notificationText

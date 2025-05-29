@@ -17,7 +17,7 @@ local JournalController = {}
 
 function JournalController:SubmitJournal(journalText: string)
 	if string.len(journalText) == 0 then
-		NotificationController:Notify("Don't forget to write something that reflects your thoughts!")
+		NotificationController:Notify("Don't forget to write something that reflects your thoughts!", 3)
 		return
 	end
 
