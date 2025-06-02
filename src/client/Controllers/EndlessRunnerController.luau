@@ -211,8 +211,10 @@ function EndlessRunnerController:OnStart()
 
 	Interface = UserInterfaceController:GetInterface("Runner")
 
-	task.delay(2, function()
-		-- self:StartGame()
+	UserInputService.InputBegan:Connect(function(input: InputObject, gameProcessed: boolean)
+		if gameProcessed then
+			return
+		end
 	end)
 end
 
