@@ -14,6 +14,9 @@ local SubmitButton: ImageButton
 local JournalScrollingFrame: ScrollingFrame
 local JournalTextBox: TextBox
 local CloseButton: TextButton
+local JournalModeFrame: Frame
+
+local CurrentMode: string = "None"
 
 -- Constants
 local MIN_TEXT_SIZE = 14
@@ -44,6 +47,31 @@ function Journal:Hide()
 
 	Interface.Enabled = false
 	JournalTextBox.Text = ""
+end
+
+function Journal:ChangeMode(mode: string)
+	if mode == CurrentMode then
+		return
+	end
+
+	local prevModeButton: ImageButton = JournalModeFrame:FindFirstChild(CurrentMode)
+
+	if prevModeButton then
+		prevModeButton:FindFirstChild("UIStroke").Enabled = false
+		prevModeButton.Size = UDim2.fromScale(0.3, 0.3)
+	end
+
+	CurrentMode = mode
+
+	local currentModeButton: ImageButton = JournalModeFrame:FindFirstChild(CurrentMode)
+
+	if not currentModeButton then
+		warn("Current mode button not found: " .. CurrentMode)
+		return
+	end
+
+	currentModeButton:FindFirstChild("UIStroke").Enabled = true
+	currentModeButton.Size = UDim2.fromScale(0.35, 0.35)
 end
 
 function Journal:Init(interfaceController)
@@ -87,7 +115,6 @@ function Journal:Init(interfaceController)
 		updateTextHeight()
 	end)
 
-	interfaceController:AddHoverEffect(CloseButton, true)
 	interfaceController:AddButtonClick(CloseButton, function()
 		self:Hide()
 		interfaceController:ShowInterface("Hud")
@@ -97,6 +124,18 @@ function Journal:Init(interfaceController)
 	interfaceController:AddButtonClick(SubmitButton, function()
 		JournalController:SubmitJournal(JournalTextBox.Text)
 	end)
+
+	JournalModeFrame = Interface:FindFirstChild("JournalModeFrame", true)
+
+	interfaceController:AddButtonClick(JournalModeFrame:FindFirstChild("Write"), function()
+		self:ChangeMode("Write")
+	end)
+
+	interfaceController:AddButtonClick(JournalModeFrame:FindFirstChild("Read"), function()
+		self:ChangeMode("Read")
+	end)
+
+	self:ChangeMode("Write")
 end
 
 return Journal
