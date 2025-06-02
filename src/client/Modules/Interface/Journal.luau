@@ -15,7 +15,6 @@ local JournalScrollingFrame: ScrollingFrame
 local JournalTextBox: TextBox
 local CloseButton: TextButton
 local JournalModeFrame: Frame
-
 local CurrentMode: string = "None"
 
 -- Constants
@@ -59,6 +58,7 @@ function Journal:ChangeMode(mode: string)
 	if prevModeButton then
 		prevModeButton:FindFirstChild("UIStroke").Enabled = false
 		prevModeButton.Size = UDim2.fromScale(0.3, 0.3)
+		Interface.Main:FindFirstChild(`{CurrentMode}Mode`).Visible = false
 	end
 
 	CurrentMode = mode
@@ -72,6 +72,8 @@ function Journal:ChangeMode(mode: string)
 
 	currentModeButton:FindFirstChild("UIStroke").Enabled = true
 	currentModeButton.Size = UDim2.fromScale(0.35, 0.35)
+
+	Interface.Main:FindFirstChild(`{CurrentMode}Mode`).Visible = true
 end
 
 function Journal:Init(interfaceController)
