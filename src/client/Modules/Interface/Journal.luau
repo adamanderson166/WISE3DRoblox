@@ -9,6 +9,10 @@ local LocalPlayer = Players.LocalPlayer
 -- Variables
 local JournalController
 
+local JournalEntries: { Frame } = {}
+
+local ReadModeFrame: Frame
+local LastJournalEntry: Frame
 local Interface: ScreenGui
 local SubmitButton: ImageButton
 local JournalScrollingFrame: ScrollingFrame
@@ -76,6 +80,43 @@ function Journal:ChangeMode(mode: string)
 	Interface.Main:FindFirstChild(`{CurrentMode}Mode`).Visible = true
 end
 
+function Journal:SetJournalEntries(journals: table)
+	ReadModeFrame.JournalEntriesFrame.Visible = #journals > 0
+	ReadModeFrame.SelectedEntryText.Visible = #journals > 0
+	ReadModeFrame.DescriptionText.Visible = #journals > 0
+	ReadModeFrame.JournalEmptyText.Visible = #journals == 0
+
+	if #journals == 0 then
+		return
+	end
+
+	-- Populate journal entries
+	local lastEntry: number = #JournalEntries
+
+	for i = lastEntry + 1, #journals do
+		local entry: { Date: string, Text: string } = journals[i]
+
+		local entryFrame: Frame = ReplicatedStorage.Assets.UI.Templates.JournalEntry:Clone()
+		entryFrame.Parent = ReadModeFrame.JournalEntriesFrame.ScrollingFrame
+		entryFrame.Visible = true
+
+		entryFrame.Name = `Entry{i}`
+		entryFrame:FindFirstChild("Date").Text = entry.Date
+		entryFrame:FindFirstChild("Title").Text = `Journal Entry {i}`
+		entryFrame:FindFirstChild("Icon"):FindFirstChild("Number").Text = i
+
+		entryFrame:FindFirstChild("Button").Activated:Connect(function()
+			if LastJournalEntry then
+				LastJournalEntry:FindFirstChild("UIStroke").Thickness = 2
+			end
+
+			entryFrame:FindFirstChild("UIStroke").Thickness = 5
+			ReadModeFrame.SelectedEntryText.JournalTextBox.Text = entry.Text
+			LastJournalEntry = entryFrame
+		end)
+	end
+end
+
 function Journal:Init(interfaceController)
 	JournalController = require(ReplicatedStorage.Client.Controllers.JournalController)
 
@@ -90,6 +131,8 @@ function Journal:Init(interfaceController)
 
 	Interface = screen:Clone()
 	Interface.Parent = playerGui
+
+	ReadModeFrame = Interface:FindFirstChild("ReadMode", true)
 
 	SubmitButton = Interface:FindFirstChild("SubmitButton", true)
 	JournalScrollingFrame = Interface:FindFirstChild("JournalScrollingFrame", true)
@@ -111,7 +154,10 @@ function Journal:Init(interfaceController)
 
 	local screenHeight: number = Interface.AbsoluteSize.Y
 	local targetSize = math.clamp(screenHeight * TEXT_SIZE_RATIO, MIN_TEXT_SIZE, MAX_TEXT_SIZE)
+
+	-- Set the text size of the journal text box for both write and read modes
 	JournalTextBox.TextSize = targetSize
+	ReadModeFrame:FindFirstChild("JournalTextBox", true).TextSize = targetSize
 
 	JournalTextBox:GetPropertyChangedSignal("Text"):Connect(function()
 		updateTextHeight()
@@ -124,6 +170,7 @@ function Journal:Init(interfaceController)
 
 	interfaceController:AddHoverEffect(SubmitButton, true)
 	interfaceController:AddButtonClick(SubmitButton, function()
+		print(JournalTextBox.Text)
 		JournalController:SubmitJournal(JournalTextBox.Text)
 	end)
 

@@ -109,7 +109,11 @@ end
 
 function PlayerDataService:SubmitJournal(player: Player, journal: string, timeStamp: number)
 	local replica: table = self:Get(player)
-	replica.Data.Journals[#replica.Data.Journals + 1] = journal
+
+	local journals: { [number]: { Date: string, Text: string } } = replica.Data:Get().Journals
+	journals[#journals + 1] = { Date = os.date("%x"), Text = journal }
+
+	replica.Data.Journals = journals
 	replica.Data.LastJournalSubmissionTimeStamp = timeStamp
 end
 

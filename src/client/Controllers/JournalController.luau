@@ -6,16 +6,17 @@ local Packages = ReplicatedStorage.Packages
 local Cardinal = require(Packages.Cardinal)
 
 -- Variables
-local Interface: ScreenGui
-
+local Interface
 local UserInterfaceController
 local NotificationController
+local PlayerDataController
 local JournalService
 
 --
 local JournalController = {}
 
 function JournalController:SubmitJournal(journalText: string)
+	print(journalText)
 	if string.len(journalText) == 0 then
 		NotificationController:Notify("Don't forget to write something that reflects your thoughts!", 3)
 		return
@@ -37,9 +38,14 @@ end
 function JournalController:OnStart()
 	UserInterfaceController = require(ReplicatedStorage.Client.Controllers.UserInterfaceController)
 	NotificationController = require(ReplicatedStorage.Client.Controllers.NotificationController)
+	PlayerDataController = require(ReplicatedStorage.Client.Controllers.PlayerDataController)
 	JournalService = Cardinal.GetService("JournalService")
 
 	Interface = UserInterfaceController:GetInterface("Journal")
+
+	PlayerDataController:ObserveChange("Journals", function(journals: table)
+		Interface:SetJournalEntries(journals)
+	end)
 end
 
 return JournalController
