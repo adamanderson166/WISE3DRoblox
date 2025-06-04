@@ -170,7 +170,6 @@ function Journal:Init(interfaceController)
 
 	interfaceController:AddHoverEffect(SubmitButton, true)
 	interfaceController:AddButtonClick(SubmitButton, function()
-		print(JournalTextBox.Text)
 		JournalController:SubmitJournal(JournalTextBox.Text)
 	end)
 
