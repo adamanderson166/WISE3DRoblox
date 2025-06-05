@@ -29,6 +29,17 @@ local TEXT_SIZE_RATIO = 1 / 20
 --
 local Journal = {}
 
+-- Update height of the text box based on the text content
+local function updateTextHeight(textBox: TextBox, scrollingFrame: ScrollingFrame)
+	local textHeight: number = textBox.TextBounds.Y
+	local frameHeight: number = scrollingFrame.AbsoluteSize.Y
+
+	local heightScale: number = textHeight / frameHeight
+
+	textBox.Size = UDim2.fromScale(0.98, heightScale)
+	scrollingFrame.CanvasSize = UDim2.fromScale(0, heightScale)
+end
+
 function Journal:Show()
 	Interface.Main.Position = UDim2.fromScale(0.5, -1)
 
@@ -112,6 +123,8 @@ function Journal:SetJournalEntries(journals: table)
 
 			entryFrame:FindFirstChild("UIStroke").Thickness = 5
 			ReadModeFrame.SelectedEntryText.JournalTextBox.Text = entry.Text
+			updateTextHeight(ReadModeFrame.SelectedEntryText.JournalTextBox, ReadModeFrame.SelectedEntryText)
+
 			LastJournalEntry = entryFrame
 		end)
 	end
@@ -139,17 +152,6 @@ function Journal:Init(interfaceController)
 	JournalTextBox = Interface:FindFirstChild("JournalTextBox", true)
 	CloseButton = Interface:FindFirstChild("CloseButton", true)
 
-	-- Update height of the text box based on the text content
-	local function updateTextHeight()
-		local textHeight: number = JournalTextBox.TextBounds.Y
-		local frameHeight: number = JournalScrollingFrame.AbsoluteSize.Y
-
-		local heightScale: number = textHeight / frameHeight
-
-		JournalTextBox.Size = UDim2.fromScale(0.98, heightScale)
-		JournalScrollingFrame.CanvasSize = UDim2.fromScale(0, heightScale)
-	end
-
 	JournalTextBox.ClearTextOnFocus = false
 
 	local screenHeight: number = Interface.AbsoluteSize.Y
@@ -160,7 +162,7 @@ function Journal:Init(interfaceController)
 	ReadModeFrame:FindFirstChild("JournalTextBox", true).TextSize = targetSize
 
 	JournalTextBox:GetPropertyChangedSignal("Text"):Connect(function()
-		updateTextHeight()
+		updateTextHeight(JournalTextBox, JournalScrollingFrame)
 	end)
 
 	interfaceController:AddButtonClick(CloseButton, function()
@@ -175,6 +177,7 @@ function Journal:Init(interfaceController)
 
 	JournalModeFrame = Interface:FindFirstChild("JournalModeFrame", true)
 
+	-- Add button clicks for mode changes
 	interfaceController:AddButtonClick(JournalModeFrame:FindFirstChild("Write"), function()
 		self:ChangeMode("Write")
 	end)
