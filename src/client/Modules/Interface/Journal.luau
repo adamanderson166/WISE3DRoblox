@@ -30,13 +30,11 @@ local TEXT_SIZE_RATIO = 1 / 20
 local Journal = {}
 
 -- Update height of the text box based on the text content
-local function updateTextHeight(textBox: TextBox, scrollingFrame: ScrollingFrame)
+local function updateTextBoxHeight(textBox: TextBox, scrollingFrame: ScrollingFrame)
 	local textHeight: number = textBox.TextBounds.Y
 	local frameHeight: number = scrollingFrame.AbsoluteSize.Y
 
 	local heightScale: number = textHeight / frameHeight
-
-	textBox.Size = UDim2.fromScale(0.98, heightScale)
 	scrollingFrame.CanvasSize = UDim2.fromScale(0, heightScale)
 end
 
@@ -123,7 +121,7 @@ function Journal:SetJournalEntries(journals: table)
 
 			entryFrame:FindFirstChild("UIStroke").Thickness = 5
 			ReadModeFrame.SelectedEntryText.JournalTextBox.Text = entry.Text
-			updateTextHeight(ReadModeFrame.SelectedEntryText.JournalTextBox, ReadModeFrame.SelectedEntryText)
+			updateTextBoxHeight(ReadModeFrame.SelectedEntryText.JournalTextBox, ReadModeFrame.SelectedEntryText)
 
 			LastJournalEntry = entryFrame
 		end)
@@ -162,7 +160,7 @@ function Journal:Init(interfaceController)
 	ReadModeFrame:FindFirstChild("JournalTextBox", true).TextSize = targetSize
 
 	JournalTextBox:GetPropertyChangedSignal("Text"):Connect(function()
-		updateTextHeight(JournalTextBox, JournalScrollingFrame)
+		updateTextBoxHeight(JournalTextBox, JournalScrollingFrame)
 	end)
 
 	interfaceController:AddButtonClick(CloseButton, function()
