@@ -12,11 +12,12 @@ local JournalController
 local JournalEntries: { Frame } = {}
 
 local ReadModeFrame: Frame
+local WriteModeFrame: Frame
 local LastJournalEntry: Frame
 local Interface: ScreenGui
 local SubmitButton: ImageButton
-local JournalScrollingFrame: ScrollingFrame
-local JournalTextBox: TextBox
+local WriteTextBox: TextBox
+local ReadTextBox: TextBox
 local CloseButton: TextButton
 local JournalModeFrame: Frame
 local CurrentMode: string = "None"
@@ -25,6 +26,7 @@ local CurrentMode: string = "None"
 local MIN_TEXT_SIZE = 14
 local MAX_TEXT_SIZE = 60
 local TEXT_SIZE_RATIO = 1 / 20
+local MAX_JOURNAL_WORDS = 350
 
 --
 local Journal = {}
@@ -58,7 +60,7 @@ function Journal:Hide()
 	):Play()
 
 	Interface.Enabled = false
-	JournalTextBox.Text = ""
+	WriteTextBox.Text = ""
 end
 
 function Journal:ChangeMode(mode: string)
@@ -120,8 +122,8 @@ function Journal:SetJournalEntries(journals: table)
 			end
 
 			entryFrame:FindFirstChild("UIStroke").Thickness = 5
-			ReadModeFrame.SelectedEntryText.JournalTextBox.Text = entry.Text
-			updateTextBoxHeight(ReadModeFrame.SelectedEntryText.JournalTextBox, ReadModeFrame.SelectedEntryText)
+			ReadTextBox.Text = entry.Text
+			--updateTextBoxHeight(ReadTextBox, ReadModeFrame.SelectedEntryText)
 
 			LastJournalEntry = entryFrame
 		end)
@@ -144,23 +146,28 @@ function Journal:Init(interfaceController)
 	Interface.Parent = playerGui
 
 	ReadModeFrame = Interface:FindFirstChild("ReadMode", true)
+	WriteModeFrame = Interface:FindFirstChild("WriteMode", true)
 
 	SubmitButton = Interface:FindFirstChild("SubmitButton", true)
-	JournalScrollingFrame = Interface:FindFirstChild("JournalScrollingFrame", true)
-	JournalTextBox = Interface:FindFirstChild("JournalTextBox", true)
+	WriteTextBox = Interface:FindFirstChild("WriteTextBox", true)
+	ReadTextBox = ReadModeFrame:FindFirstChild("ReadTextBox", true)
 	CloseButton = Interface:FindFirstChild("CloseButton", true)
 
-	JournalTextBox.ClearTextOnFocus = false
+	WriteTextBox.ClearTextOnFocus = false
 
 	local screenHeight: number = Interface.AbsoluteSize.Y
 	local targetSize = math.clamp(screenHeight * TEXT_SIZE_RATIO, MIN_TEXT_SIZE, MAX_TEXT_SIZE)
 
 	-- Set the text size of the journal text box for both write and read modes
-	JournalTextBox.TextSize = targetSize
-	ReadModeFrame:FindFirstChild("JournalTextBox", true).TextSize = targetSize
+	WriteTextBox.TextSize = targetSize
+	ReadTextBox.TextSize = targetSize
 
-	JournalTextBox:GetPropertyChangedSignal("Text"):Connect(function()
-		updateTextBoxHeight(JournalTextBox, JournalScrollingFrame)
+	WriteTextBox:GetPropertyChangedSignal("Text"):Connect(function()
+		if string.len(WriteTextBox.Text) > MAX_JOURNAL_WORDS then
+			WriteTextBox.Text = WriteTextBox.Text:sub(1, MAX_JOURNAL_WORDS)
+		end
+
+		--updateTextBoxHeight(WriteTextBox, WriteModeFrame:FindFirstChild("JournalScrollingFrame", true))
 	end)
 
 	interfaceController:AddButtonClick(CloseButton, function()
@@ -170,7 +177,7 @@ function Journal:Init(interfaceController)
 
 	interfaceController:AddHoverEffect(SubmitButton, true)
 	interfaceController:AddButtonClick(SubmitButton, function()
-		JournalController:SubmitJournal(JournalTextBox.Text)
+		JournalController:SubmitJournal(WriteTextBox.Text)
 	end)
 
 	JournalModeFrame = Interface:FindFirstChild("JournalModeFrame", true)
