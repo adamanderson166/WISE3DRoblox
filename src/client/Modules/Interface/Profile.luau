@@ -54,9 +54,7 @@ end
 function Profile:SetLevelAndXp(level: number, xp: number)
 	CurrentLevel.Text = `Level {level}`
 
-	local xpForNextLevel: number = LevelUtility:GetNextLevelXp(level + 1)
-
-	NextLevelXp.Text = `{xp} / {xpForNextLevel}`
+	NextLevelXp.Text = `{xp} / {LevelUtility:GetTotalXpToReachLevel(level + 1)}`
 end
 
 function Profile:SetDailyCheckIns(count: number)
@@ -133,6 +131,7 @@ function Profile:Init(interfaceController)
 		dailyCheckInButton.Activated:Connect(function()
 			self:Hide()
 			DailyCheckInController:MoveToDailyCheckInPortal()
+			interfaceController:ShowInterface("Hud")
 		end)
 
 		goToJournalButton.Activated:Connect(function()
