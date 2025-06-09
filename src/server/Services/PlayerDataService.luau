@@ -17,6 +17,13 @@ local Template = {
 	Xp = 0,
 	DailyCheckInStreak = 0,
 	LastCheckInTimeStamp = 0,
+	QuestionsAnswered = 0,
+	SelfAssessments = 0,
+	MentorSessions = 0,
+	MinigameRuns = 0,
+	MinigameHighScore = 0,
+	MinigameDeaths = 0,
+	MinigameMaxDistance = 0,
 	LastJournalSubmissionTimeStamp = 0,
 	Journals = {},
 }

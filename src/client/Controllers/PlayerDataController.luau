@@ -36,9 +36,8 @@ end
 
 function PlayerDataController:GetKey(key: string)
 	return Promise.new(function(resolve)
-		self:GetReplica():andThen(function(replica)
-			resolve(replica.Data[key])
-		end)
+		local replica = self:GetReplica():expect()
+		resolve(replica.Data[key])
 	end)
 end
 
