@@ -13,17 +13,19 @@ local Replicator = require(ReplicatedStorage.Packages.Replicator)
 
 local Store
 local Template = {
-	Level = 0,
-	Xp = 0,
+	Level = 1,
+	Xp = 100,
 	DailyCheckInStreak = 0,
 	LastCheckInTimeStamp = 0,
 	QuestionsAnswered = 0,
 	SelfAssessments = 0,
 	MentorSessions = 0,
-	MinigameRuns = 0,
-	MinigameHighScore = 0,
-	MinigameDeaths = 0,
-	MinigameMaxDistance = 0,
+	MinigameStats = {
+		Runs = 0,
+		HighScore = 0,
+		Deaths = 0,
+		MaxDistance = 0,
+	},
 	LastJournalSubmissionTimeStamp = 0,
 	Journals = {},
 }

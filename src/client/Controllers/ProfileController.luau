@@ -29,7 +29,7 @@ function ProfileController:OnStart()
 		Interface:SetLevelAndXp(level, xp)
 	end)
 
-	PlayerDataController:ObserveChange("Journals", function(journals: { [number]: any })
+	PlayerDataController:ObserveChange("Journals", function(journals: table)
 		Interface:SetJournals(#journals)
 	end)
 
@@ -43,6 +43,10 @@ function ProfileController:OnStart()
 
 	PlayerDataController:ObserveChange("MentorSessions", function(count: number)
 		Interface:SetMentorSessions(count)
+	end)
+
+	PlayerDataController:ObserveChange("MinigameStats", function(stats: table)
+		Interface:SetMinigameStats(stats)
 	end)
 end
 

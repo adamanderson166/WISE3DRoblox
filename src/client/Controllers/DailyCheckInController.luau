@@ -9,6 +9,7 @@ local Cardinal = require(Packages.Cardinal)
 local PlayerDataController
 local DailyCheckInService
 local NotificationController
+local CharacterController
 
 --
 local DailyCheckInController = {}
@@ -25,9 +26,15 @@ function DailyCheckInController:CheckIn()
 	return status
 end
 
+function DailyCheckInController:MoveToDailyCheckInPortal()
+	local dailyLoginSpawn: BasePart = workspace:FindFirstChild("DailyLoginSpawn")
+	CharacterController:MoveToLocation(dailyLoginSpawn.Position)
+end
+
 function DailyCheckInController:OnStart()
 	PlayerDataController = require(ReplicatedStorage.Client.Controllers.PlayerDataController)
 	NotificationController = require(ReplicatedStorage.Client.Controllers.NotificationController)
+	CharacterController = require(ReplicatedStorage.Client.Controllers.CharacterController)
 	DailyCheckInService = Cardinal.GetService("DailyCheckInService")
 
 	PlayerDataController:ObserveChange("DailyCheckInStreak", function(streak: number)

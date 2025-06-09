@@ -10,6 +10,8 @@ local LevelUtility = require(ReplicatedStorage.Shared.Modules.LevelUtility)
 local LocalPlayer = Players.LocalPlayer
 
 -- Variables
+local DailyCheckInController
+
 local Interface: ScreenGui
 local CloseButton: TextButton
 local CurrentLevel: TextLabel
@@ -19,6 +21,10 @@ local TotalJournals: TextLabel
 local TotalQuestions: TextLabel
 local TotalAssessments: TextLabel
 local TotalMentorSessions: TextLabel
+local TotalRuns: TextLabel
+local TotalDeaths: TextLabel
+local HighScore: TextLabel
+local MaxDistance: TextLabel
 
 --
 local Profile = {}
@@ -47,7 +53,10 @@ end
 
 function Profile:SetLevelAndXp(level: number, xp: number)
 	CurrentLevel.Text = `Level {level}`
-	NextLevelXp.Text = `{xp} / 1000`
+
+	local xpForNextLevel: number = LevelUtility:GetNextLevelXp(level + 1)
+
+	NextLevelXp.Text = `{xp} / {xpForNextLevel}`
 end
 
 function Profile:SetDailyCheckIns(count: number)
@@ -55,19 +64,26 @@ function Profile:SetDailyCheckIns(count: number)
 end
 
 function Profile:SetJournals(count: number)
-	TotalJournals.Text = `Total submitted: {count}`
+	TotalJournals.Text = `Total Submitted: {count}`
 end
 
 function Profile:SetQuestionsAnswered(count: number)
-	TotalQuestions.Text = `Total answered: {count}`
+	TotalQuestions.Text = `Total Answered: {count}`
 end
 
 function Profile:SetSelfAssessments(count: number)
-	TotalAssessments.Text = `Total challenges: {count}`
+	TotalAssessments.Text = `Total Challenges: {count}`
 end
 
 function Profile:SetMentorSessions(count: number)
-	TotalMentorSessions.Text = `Total sessions: {count}`
+	TotalMentorSessions.Text = `Total Sessions: {count}`
+end
+
+function Profile:SetMinigameStats(stats: table)
+	TotalRuns.Text = `Total Runs: {stats.Runs}`
+	TotalDeaths.Text = `Total Deaths: {stats.Deaths}`
+	HighScore.Text = `High Score: {stats.HighScore}`
+	MaxDistance.Text = `Max Distance: {stats.MaxDistance}`
 end
 
 function Profile:Init(interfaceController)
@@ -100,6 +116,13 @@ function Profile:Init(interfaceController)
 	TotalAssessments = Interface.Main:FindFirstChild("TotalAssessments", true)
 	TotalMentorSessions = Interface.Main:FindFirstChild("TotalSessions", true)
 
+	TotalRuns = Interface.Main:FindFirstChild("TotalRuns", true)
+	TotalDeaths = Interface.Main:FindFirstChild("TotalDeaths", true)
+	HighScore = Interface.Main:FindFirstChild("HighScore", true)
+	MaxDistance = Interface.Main:FindFirstChild("MaxDistance", true)
+
+	DailyCheckInController = require(ReplicatedStorage.Client.Controllers.DailyCheckInController)
+
 	task.spawn(function()
 		local dailyCheckInButton: TextButton = Interface.Main:FindFirstChild("DailyCheckInButton", true)
 		local goToJournalButton: TextButton = Interface.Main:FindFirstChild("GoToJournalButton", true)
@@ -107,9 +130,15 @@ function Profile:Init(interfaceController)
 		local goToSelfAssessmentButton: TextButton = Interface.Main:FindFirstChild("GoToSelfAssessmentButton", true)
 		local goToMentorSessionButton: TextButton = Interface.Main:FindFirstChild("GoToMentorSessionButton", true)
 
-		dailyCheckInButton.Activated:Connect(function() end)
+		dailyCheckInButton.Activated:Connect(function()
+			self:Hide()
+			DailyCheckInController:MoveToDailyCheckInPortal()
+		end)
 
-		goToJournalButton.Activated:Connect(function() end)
+		goToJournalButton.Activated:Connect(function()
+			self:Hide()
+			interfaceController:ShowInterface("Journal")
+		end)
 
 		goToQuestionButton.Activated:Connect(function() end)
 
