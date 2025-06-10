@@ -56,6 +56,34 @@ end
 
 function Chunk:Populate()
 	-- Populate the instance with obstacles and environment objects
+	local laneNames: { string } = { "Left", "Middle", "Right" }
+
+	for i = 1, 2 do
+		-- Generate a random lane
+		local randomLane: number = math.random(1, #laneNames)
+
+		local path: BasePart = self._model:FindFirstChild(laneNames[randomLane] .. "Path")
+
+		if not path then
+			warn("Path not found for lane: " .. laneNames[randomLane])
+			continue
+		end
+
+		table.remove(laneNames, randomLane)
+
+		-- Generate a random spawn location within the path
+		local locationNames: { string } = { "Front", "Center", "Rear" }
+		local randomLocation: number = math.random(1, #locationNames)
+
+		local spawnLocation: Attachment = path:FindFirstChild(locationNames[randomLocation])
+
+		if not spawnLocation then
+			warn("Spawn location not found for lane: " .. locationNames[randomLane])
+			continue
+		end
+
+		table.remove(locationNames, randomLocation)
+	end
 end
 
 function Chunk:Clear()

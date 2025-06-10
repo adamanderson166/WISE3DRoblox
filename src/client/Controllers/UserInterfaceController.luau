@@ -40,7 +40,11 @@ function UserInterfaceController:ShowInterface(interfaceName: string)
 	end
 end
 
-function UserInterfaceController:AddHoverEffect(button: TextButton | ImageButton, resetEffectOnClick: boolean)
+function UserInterfaceController:AddHoverEffect(
+	button: TextButton | ImageButton,
+	resetEffectOnClick: boolean?,
+	sound: string?
+)
 	if not button:IsA("TextButton") and not button:IsA("ImageButton") then
 		warn("Expected textButton or imageButton for hover effect.")
 		return
@@ -69,9 +73,14 @@ function UserInterfaceController:AddHoverEffect(button: TextButton | ImageButton
 			button.Size = size
 		end)
 	end
+
+	if sound then
+		-- Play sound effect
+		SoundController:Play(sound)
+	end
 end
 
-function UserInterfaceController:AddButtonClick(button: TextButton | ImageButton, callback: () -> (), sound: string)
+function UserInterfaceController:AddButtonClick(button: TextButton | ImageButton, callback: () -> (), sound: string?)
 	if not button:IsA("TextButton") and not button:IsA("ImageButton") then
 		warn("Expected textButton or imageButton for hover effect.")
 		return

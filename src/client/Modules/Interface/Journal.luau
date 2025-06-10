@@ -170,10 +170,11 @@ function Journal:Init(interfaceController)
 		--updateTextBoxHeight(WriteTextBox, WriteModeFrame:FindFirstChild("JournalScrollingFrame", true))
 	end)
 
+	interfaceController:AddHoverEffect(CloseButton, true)
 	interfaceController:AddButtonClick(CloseButton, function()
 		self:Hide()
 		interfaceController:ShowInterface("Hud")
-	end, "Click")
+	end, "ClickClose")
 
 	interfaceController:AddHoverEffect(SubmitButton, true)
 	interfaceController:AddButtonClick(SubmitButton, function()

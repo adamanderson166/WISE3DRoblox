@@ -103,7 +103,7 @@ function Profile:Init(interfaceController)
 	interfaceController:AddButtonClick(CloseButton, function()
 		self:Hide()
 		interfaceController:ShowInterface("Hud")
-	end, "Click")
+	end, "ClickClose")
 
 	CurrentLevel = Interface.Main:FindFirstChild("CurrentLevel", true)
 	NextLevelXp = Interface.Main:FindFirstChild("NextLevelXp", true)
