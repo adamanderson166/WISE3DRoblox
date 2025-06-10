@@ -37,6 +37,7 @@ local MOVE_RIGHT_KEYCODES = {
 local Interface
 local CharacterController
 local UserInterfaceController
+local CameraController
 
 local ChunksList: { table } = {}
 local TargetCFrame: CFrame = nil
@@ -55,8 +56,8 @@ local EndlessRunnerController = {}
 function EndlessRunnerController:PopulateChunks()
 	-- Populate the chunks with obstacles and environment objects, skip the first two chunks so players dont run into them right away
 
-	for _, chunk: table in ipairs(ChunksList) do
-		if chunk:GetModel():GetAttribute("Position") > 2 then
+	for index: number, chunk: table in ipairs(ChunksList) do
+		if index > 2 then
 			chunk:Populate()
 		end
 	end
@@ -86,13 +87,14 @@ function EndlessRunnerController:MoveChunks()
 			recycledChunk:Clear()
 
 			recycledChunk:MoveToStepFromPosition(ChunksList[#ChunksList]:GetModel():GetPivot().Position, 1)
+			recycledChunk:Populate()
 			table.insert(ChunksList, recycledChunk)
 		end
 	end))
 end
 
 function EndlessRunnerController:SpawnChunks()
-	local chunkRef: Model = ReplicatedStorage.Assets.EndlessRunner:WaitForChild("Chunk", 5)
+	local chunkRef: Model = workspace.EndlessRunner:WaitForChild("Chunk", 5)
 
 	local startingPosition: Vector3 = chunkRef:GetPivot().Position
 
@@ -144,22 +146,21 @@ end
 function EndlessRunnerController:SetupLanes()
 	local character: Model = Player.Character or Player.CharacterAdded:Wait()
 
-	PlayerLanes[1] = ChunksList[1]:GetModel().LeftPath.Front.WorldCFrame.Position
+	PlayerLanes[1] = ChunksList[2]:GetModel().LeftPath.Front.WorldCFrame.Position
 		+ Vector3.new(0, 0, 2)
 		+ Vector3.new(0, character:GetExtentsSize().Y / 2, 0)
 
-	PlayerLanes[2] = ChunksList[1]:GetModel().MiddlePath.Front.WorldCFrame.Position
+	PlayerLanes[2] = ChunksList[2]:GetModel().MiddlePath.Front.WorldCFrame.Position
 		+ Vector3.new(0, 0, 2)
 		+ Vector3.new(0, character:GetExtentsSize().Y / 2, 0)
 
-	PlayerLanes[3] = ChunksList[1]:GetModel().RightPath.Front.WorldCFrame.Position
+	PlayerLanes[3] = ChunksList[2]:GetModel().RightPath.Front.WorldCFrame.Position
 		+ Vector3.new(0, 0, 2)
 		+ Vector3.new(0, character:GetExtentsSize().Y / 2, 0)
 
 	CurrentLane = 2 -- Middle lane
 	PreviousLane = 2
 
-	-- Position Player on the first chunk
 	TargetCFrame = (CFrame.new(PlayerLanes[CurrentLane])) * CFrame.Angles(0, math.rad(180), 0)
 	character:PivotTo(TargetCFrame)
 
@@ -193,6 +194,12 @@ function EndlessRunnerController:StartGame()
 	self:SetupLanes()
 	self:PopulateChunks()
 
+	CameraController:FollowTargetWithOffset(
+		Player.Character.PrimaryPart,
+		-Player.Character.PrimaryPart.CFrame.LookVector,
+		Vector3.new(0, 8, -15)
+	)
+
 	UserInterfaceController:ShowInterface("Runner")
 
 	-- Display a countdown then start the game
@@ -208,6 +215,7 @@ end
 function EndlessRunnerController:OnStart()
 	CharacterController = require(ReplicatedStorage.Client.Controllers.CharacterController)
 	UserInterfaceController = require(ReplicatedStorage.Client.Controllers.UserInterfaceController)
+	CameraController = require(ReplicatedStorage.Client.Controllers.CameraController)
 
 	Interface = UserInterfaceController:GetInterface("Runner")
 end

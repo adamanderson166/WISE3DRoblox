@@ -20,9 +20,8 @@ function Chunk:New(startingPosition: Vector3, step: number, length: number)
 	instance._trove = Trove.new()
 
 	-- Create a new instance of the Chunk model
-	instance._model = ReplicatedStorage.Assets.EndlessRunner.Chunk:Clone()
+	instance._model = workspace.EndlessRunner.Chunk:Clone()
 	instance._model.Parent = workspace.EndlessRunner
-	instance._model:SetAttribute("Position", step)
 
 	-- Move to position
 	instance:MoveToStepFromPosition(startingPosition, step)
@@ -74,7 +73,7 @@ function Chunk:Populate()
 			table.remove(laneNames, randomLane)
 
 			-- Generate a random spawn location within the path
-			local locationNames: { string } = { "Front", "Center", "Rear" }
+			local locationNames: { string } = { "Center", "Rear" }
 			local randomLocation: number = math.random(1, #locationNames)
 
 			local spawnLocation: Attachment = path:FindFirstChild(locationNames[randomLocation])
