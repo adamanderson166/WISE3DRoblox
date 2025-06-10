@@ -173,23 +173,23 @@ function Journal:Init(interfaceController)
 	interfaceController:AddButtonClick(CloseButton, function()
 		self:Hide()
 		interfaceController:ShowInterface("Hud")
-	end)
+	end, "Click")
 
 	interfaceController:AddHoverEffect(SubmitButton, true)
 	interfaceController:AddButtonClick(SubmitButton, function()
 		JournalController:SubmitJournal(WriteTextBox.Text)
-	end)
+	end, "Click")
 
 	JournalModeFrame = Interface:FindFirstChild("JournalModeFrame", true)
 
 	-- Add button clicks for mode changes
 	interfaceController:AddButtonClick(JournalModeFrame:FindFirstChild("Write"), function()
 		self:ChangeMode("Write")
-	end)
+	end, "Click")
 
 	interfaceController:AddButtonClick(JournalModeFrame:FindFirstChild("Read"), function()
 		self:ChangeMode("Read")
-	end)
+	end, "Click")
 
 	self:ChangeMode("Write")
 end

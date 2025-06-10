@@ -174,6 +174,8 @@ function SoundController:OnStart()
 	SoundService.PlaySound:Connect(function(id: string, data: SoundData)
 		self:Play(id, data)
 	end)
+
+	self:Play("Background")
 end
 
 return SoundController

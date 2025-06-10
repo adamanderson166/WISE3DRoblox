@@ -87,7 +87,7 @@ function Hud:Init(interfaceController)
 
 			self:Hide()
 			interfaceController:ShowInterface(button.Name)
-		end)
+		end, "Click")
 	end
 
 	leftPanelToggleButton = LeftPanel:FindFirstChild("ToggleButton", true)
@@ -95,7 +95,7 @@ function Hud:Init(interfaceController)
 	interfaceController:AddHoverEffect(leftPanelToggleButton)
 	interfaceController:AddButtonClick(leftPanelToggleButton, function()
 		self:ToggleLeftPanel()
-	end)
+	end, "Click")
 end
 
 return Hud

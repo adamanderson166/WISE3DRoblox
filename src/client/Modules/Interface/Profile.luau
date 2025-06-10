@@ -103,7 +103,7 @@ function Profile:Init(interfaceController)
 	interfaceController:AddButtonClick(CloseButton, function()
 		self:Hide()
 		interfaceController:ShowInterface("Hud")
-	end)
+	end, "Click")
 
 	CurrentLevel = Interface.Main:FindFirstChild("CurrentLevel", true)
 	NextLevelXp = Interface.Main:FindFirstChild("NextLevelXp", true)
@@ -128,22 +128,22 @@ function Profile:Init(interfaceController)
 		local goToSelfAssessmentButton: TextButton = Interface.Main:FindFirstChild("GoToSelfAssessmentButton", true)
 		local goToMentorSessionButton: TextButton = Interface.Main:FindFirstChild("GoToMentorSessionButton", true)
 
-		dailyCheckInButton.Activated:Connect(function()
+		interfaceController:AddButtonClick(dailyCheckInButton, function()
 			self:Hide()
 			DailyCheckInController:MoveToDailyCheckInPortal()
 			interfaceController:ShowInterface("Hud")
-		end)
+		end, "Click")
 
-		goToJournalButton.Activated:Connect(function()
+		interfaceController:AddButtonClick(goToJournalButton, function()
 			self:Hide()
 			interfaceController:ShowInterface("Journal")
-		end)
+		end, "Click")
 
-		goToQuestionButton.Activated:Connect(function() end)
+		interfaceController:AddButtonClick(goToQuestionButton, function() end, "Click")
 
-		goToSelfAssessmentButton.Activated:Connect(function() end)
+		interfaceController:AddButtonClick(goToSelfAssessmentButton, function() end, "Click")
 
-		goToMentorSessionButton.Activated:Connect(function() end)
+		interfaceController:AddButtonClick(goToMentorSessionButton, function() end, "Click")
 	end)
 end
 

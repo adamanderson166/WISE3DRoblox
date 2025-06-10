@@ -10,6 +10,7 @@ local Promise = require(Packages.Promise)
 local UiFolder = ReplicatedStorage.Client.Modules.Interface
 
 -- Variables
+local SoundController
 local Interfaces: { [string]: ModuleScript } = {}
 
 --
@@ -86,11 +87,14 @@ function UserInterfaceController:AddButtonClick(button: TextButton | ImageButton
 
 		if sound then
 			-- Play sound effect
+			SoundController:Play(sound)
 		end
 	end)
 end
 
 function UserInterfaceController:OnInit()
+	SoundController = require(ReplicatedStorage.Client.Controllers.SoundController)
+
 	InitializeInterfaces()
 end
 
