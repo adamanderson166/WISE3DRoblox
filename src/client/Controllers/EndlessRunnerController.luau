@@ -210,12 +210,6 @@ function EndlessRunnerController:OnStart()
 	UserInterfaceController = require(ReplicatedStorage.Client.Controllers.UserInterfaceController)
 
 	Interface = UserInterfaceController:GetInterface("Runner")
-
-	UserInputService.InputBegan:Connect(function(input: InputObject, gameProcessed: boolean)
-		if gameProcessed then
-			return
-		end
-	end)
 end
 
 function EndlessRunnerController:OnInit()

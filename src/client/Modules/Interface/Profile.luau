@@ -11,6 +11,7 @@ local LocalPlayer = Players.LocalPlayer
 
 -- Variables
 local DailyCheckInController
+local EndlessRunnerController
 
 local Interface: ScreenGui
 local CloseButton: TextButton
@@ -120,6 +121,7 @@ function Profile:Init(interfaceController)
 	MaxDistance = Interface.Main:FindFirstChild("MaxDistance", true)
 
 	DailyCheckInController = require(ReplicatedStorage.Client.Controllers.DailyCheckInController)
+	EndlessRunnerController = require(ReplicatedStorage.Client.Controllers.EndlessRunnerController)
 
 	task.spawn(function()
 		local dailyCheckInButton: TextButton = Interface.Main:FindFirstChild("DailyCheckInButton", true)
@@ -127,6 +129,7 @@ function Profile:Init(interfaceController)
 		local goToQuestionButton: TextButton = Interface.Main:FindFirstChild("GoToQuestionButton", true)
 		local goToSelfAssessmentButton: TextButton = Interface.Main:FindFirstChild("GoToSelfAssessmentButton", true)
 		local goToMentorSessionButton: TextButton = Interface.Main:FindFirstChild("GoToMentorSessionButton", true)
+		local goToObbyButton: TextButton = Interface.Main:FindFirstChild("GoToObbyButton", true)
 
 		interfaceController:AddButtonClick(dailyCheckInButton, function()
 			self:Hide()
@@ -144,6 +147,11 @@ function Profile:Init(interfaceController)
 		interfaceController:AddButtonClick(goToSelfAssessmentButton, function() end, "Click")
 
 		interfaceController:AddButtonClick(goToMentorSessionButton, function() end, "Click")
+
+		interfaceController:AddButtonClick(goToObbyButton, function()
+			self:Hide()
+			EndlessRunnerController:StartGame()
+		end, "Click")
 	end)
 end
 

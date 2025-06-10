@@ -55,35 +55,45 @@ function Chunk:GetModel()
 end
 
 function Chunk:Populate()
-	-- Populate the instance with obstacles and environment objects
-	local laneNames: { string } = { "Left", "Middle", "Right" }
+	-- Populate the instance with obstacles
+	task.spawn(function()
+		local laneNames: { string } = { "Left", "Middle", "Right" }
 
-	for i = 1, 2 do
-		-- Generate a random lane
-		local randomLane: number = math.random(1, #laneNames)
+		for i = 1, 2 do
+			-- Generate a random lane
+			local randomLane: number = math.random(1, #laneNames)
 
-		local path: BasePart = self._model:FindFirstChild(laneNames[randomLane] .. "Path")
+			local path: BasePart = self._model:FindFirstChild(laneNames[randomLane] .. "Path")
 
-		if not path then
-			warn("Path not found for lane: " .. laneNames[randomLane])
-			continue
+			if not path then
+				warn("Path not found for lane: " .. laneNames[randomLane])
+				continue
+			end
+
+			-- Remove the lane from the list to avoid duplicates
+			table.remove(laneNames, randomLane)
+
+			-- Generate a random spawn location within the path
+			local locationNames: { string } = { "Front", "Center", "Rear" }
+			local randomLocation: number = math.random(1, #locationNames)
+
+			local spawnLocation: Attachment = path:FindFirstChild(locationNames[randomLocation])
+
+			if not spawnLocation then
+				warn("Spawn location not found for lane: " .. locationNames[randomLane])
+				continue
+			end
+
+			local obstacles: { Model } = ReplicatedStorage.Assets.EndlessRunner.Obstacles:GetChildren()
+
+			local randomObstacle: Model = obstacles[math.random(1, #obstacles)]:Clone()
+			randomObstacle.Parent = self._model.Obstacles
+			randomObstacle:PivotTo(CFrame.new(spawnLocation.WorldCFrame.Position))
+
+			-- Remove the location from the list to avoid duplicates
+			table.remove(locationNames, randomLocation)
 		end
-
-		table.remove(laneNames, randomLane)
-
-		-- Generate a random spawn location within the path
-		local locationNames: { string } = { "Front", "Center", "Rear" }
-		local randomLocation: number = math.random(1, #locationNames)
-
-		local spawnLocation: Attachment = path:FindFirstChild(locationNames[randomLocation])
-
-		if not spawnLocation then
-			warn("Spawn location not found for lane: " .. locationNames[randomLane])
-			continue
-		end
-
-		table.remove(locationNames, randomLocation)
-	end
+	end)
 end
 
 function Chunk:Clear()
