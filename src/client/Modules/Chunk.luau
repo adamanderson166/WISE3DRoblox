@@ -61,7 +61,7 @@ function Chunk:GetModel()
 	return self._model
 end
 
-function Chunk:Populate()
+function Chunk:PopulateObstacles()
 	-- Populate the instance with obstacles
 	task.spawn(function()
 		local laneNames: { string } = { "Left", "Middle", "Right" }
@@ -105,7 +105,7 @@ function Chunk:Populate()
 			self._trove:Add(
 				ObstacleModules[type].New(
 					randomObstacle:Clone(),
-					spawnLocation.WorldCFrame.Position,
+					spawnLocation.WorldCFrame.Position + Vector3.new(0, 1, 0),
 					self._model.Obstacles
 				)
 			)
@@ -116,12 +116,20 @@ function Chunk:Populate()
 	end)
 end
 
-function Chunk:Destroy()
-	self._model:Destroy()
-	self._model = nil
-
-	-- Clean up the trove
+function Chunk:ClearObstacles()
 	self._trove:Clean()
+end
+
+function Chunk:Destroy()
+	self:ClearObstacles()
+
+	if self._model then
+		self._model:Destroy()
+	end
+
+	self._trove = nil
+	self._model = nil
+	self._length = nil
 end
 
 return Chunk

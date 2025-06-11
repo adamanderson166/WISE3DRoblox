@@ -58,7 +58,7 @@ function EndlessRunnerController:PopulateChunks()
 
 	for index: number, chunk: table in ipairs(ChunksList) do
 		if index > 2 then
-			chunk:Populate()
+			chunk:PopulateObstacles()
 		end
 	end
 end
@@ -84,10 +84,10 @@ function EndlessRunnerController:MoveChunks()
 		if ChunksList[1]:GetModel():GetPivot().Position.Z < threshold then
 			-- Remove the chunk from the list and clear it
 			local recycledChunk = table.remove(ChunksList, 1)
-			recycledChunk:Clear()
+			recycledChunk:ClearObstacles()
 
 			recycledChunk:MoveToStepFromPosition(ChunksList[#ChunksList]:GetModel():GetPivot().Position, 1)
-			recycledChunk:Populate()
+			recycledChunk:PopulateObstacles()
 			table.insert(ChunksList, recycledChunk)
 		end
 	end))
