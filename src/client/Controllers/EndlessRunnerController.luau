@@ -218,6 +218,9 @@ function EndlessRunnerController:OnStart()
 	CameraController = require(ReplicatedStorage.Client.Controllers.CameraController)
 
 	Interface = UserInterfaceController:GetInterface("Runner")
+
+	local book = require(ReplicatedStorage.Client.Modules.Obstacles.Book)
+	book.New()
 end
 
 function EndlessRunnerController:OnInit()
