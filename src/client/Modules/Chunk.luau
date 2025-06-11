@@ -8,6 +8,14 @@ local Trove = require(Packages.Trove)
 -- Constants
 local DEBUG_POSITION = false
 
+-- Variables
+local ObstacleModules = {}
+
+--
+for _, module: ModuleScript in ipairs(ReplicatedStorage.Client.Modules.Obstacles:GetChildren()) do
+	ObstacleModules[module.Name] = require(module)
+end
+
 --
 local Chunk = {}
 Chunk.__index = Chunk
@@ -85,9 +93,22 @@ function Chunk:Populate()
 
 			local obstacles: { Model } = ReplicatedStorage.Assets.EndlessRunner.Obstacles:GetChildren()
 
-			local randomObstacle: Model = obstacles[math.random(1, #obstacles)]:Clone()
-			randomObstacle.Parent = self._model.Obstacles
-			randomObstacle:PivotTo(CFrame.new(spawnLocation.WorldCFrame.Position))
+			local randomObstacle: Model = obstacles[math.random(1, #obstacles)]
+			local type: string = randomObstacle:GetAttribute("Type")
+
+			if not type or not ObstacleModules[type] then
+				warn(`Either type "{type}" is not set for the model or the module for type "{type}" does not exist.`)
+				continue
+			end
+
+			-- Create a new obstacle instance and add it to the trove
+			self._trove:Add(
+				ObstacleModules[type].New(
+					randomObstacle:Clone(),
+					spawnLocation.WorldCFrame.Position,
+					self._model.Obstacles
+				)
+			)
 
 			-- Remove the location from the list to avoid duplicates
 			table.remove(locationNames, randomLocation)
@@ -95,7 +116,11 @@ function Chunk:Populate()
 	end)
 end
 
-function Chunk:Clear()
+function Chunk:Destroy()
+	self._model:Destroy()
+	self._model = nil
+
+	-- Clean up the trove
 	self._trove:Clean()
 end
 

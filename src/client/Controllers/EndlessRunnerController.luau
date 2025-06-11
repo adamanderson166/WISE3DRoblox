@@ -200,7 +200,7 @@ function EndlessRunnerController:StartGame()
 		Vector3.new(0, 8, -15)
 	)
 
-	UserInterfaceController:ShowInterface("Runner")
+	Interface:Show()
 
 	-- Display a countdown then start the game
 	Interface:StartCountdown(3):andThen(function()
@@ -212,15 +212,32 @@ function EndlessRunnerController:StartGame()
 	end)
 end
 
+function EndlessRunnerController:StopGame()
+	CharacterController:ToggleControls(true)
+	CharacterController:StopAnimation()
+	CharacterController:MoveToLocation(workspace:FindFirstChild("SpawnLocation").CFrame * CFrame.new(0, 5, 0))
+
+	CameraController:FocusCameraOnPlayer()
+
+	self._trove:Clean()
+
+	for _, chunk: table in ipairs(ChunksList) do
+		chunk:Destroy()
+	end
+
+	ChunksList = {}
+
+	Interface:Hide()
+
+	UserInterfaceController:ShowInterface("Hud")
+end
+
 function EndlessRunnerController:OnStart()
 	CharacterController = require(ReplicatedStorage.Client.Controllers.CharacterController)
 	UserInterfaceController = require(ReplicatedStorage.Client.Controllers.UserInterfaceController)
 	CameraController = require(ReplicatedStorage.Client.Controllers.CameraController)
 
 	Interface = UserInterfaceController:GetInterface("Runner")
-
-	local book = require(ReplicatedStorage.Client.Modules.Obstacles.Book)
-	book.New()
 end
 
 function EndlessRunnerController:OnInit()

@@ -8,9 +8,14 @@ local ObstacleBase = require(ReplicatedStorage.Client.Modules.Obstacles.Obstacle
 local Book = setmetatable({}, ObstacleBase)
 Book.__index = Book
 
-function Book.New(bookModel: Model, position: Vector3)
+function Book.New(bookModel: Model, position: Vector3, parent: Instance)
 	local instance = setmetatable({}, Book)
-	instance:Init(bookModel, position)
+	instance:Init(bookModel, position, parent)
+	return instance
+end
+
+function Book:Destroy()
+	self:Clear()
 end
 
 return Book

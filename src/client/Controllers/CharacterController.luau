@@ -11,12 +11,16 @@ local PlayerModule
 --
 local CharacterController = {}
 
-function CharacterController:PlayAnimation(animId: string)
+function CharacterController:StopAnimation()
 	if self._animation then
 		self._animation:Stop()
 		self._animation:Destroy()
 		self._animation = nil
 	end
+end
+
+function CharacterController:PlayAnimation(animId: string)
+	self:StopAnimation()
 
 	local character: Model = Player.Character or Player.CharacterAdded:Wait()
 	local humanoid: Humanoid = character.Humanoid

@@ -32,7 +32,7 @@ function Runner:StartCountdown(countdown: number)
 			warn("CountdownText not found!")
 			reject()
 		end
-
+		CountdownText.TextTransparency = 0
 		CountdownText.Text = countdown
 
 		for i: number = countdown, 1, -1 do
