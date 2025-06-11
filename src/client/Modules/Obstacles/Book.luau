@@ -6,7 +6,7 @@ local RunService = game:GetService("RunService")
 local ObstacleBase = require(ReplicatedStorage.Client.Modules.Obstacles.ObstacleBase)
 
 -- Constants
-local HOVER_HEIGHT = 5
+local HOVER_HEIGHT = 2
 local HOVER_SPEED = 2
 
 --
@@ -16,20 +16,21 @@ Book.__index = Book
 function Book.New(bookModel: Model, position: Vector3, parent: Instance)
 	local instance = setmetatable({}, Book)
 
-	instance:Init(bookModel, position, parent)
+	-- Creating final position for the book obstacle in order to hover above the spawn location
+	local finalPos: Vector3 = position + Vector3.new(0, bookModel:GetBoundingBox().Y / 3, 0)
+	instance:Init(bookModel, finalPos, parent)
 
 	local time: number = 0
-
-	local offset: CFrame = instance._obstacle:GetPivot():ToObjectSpace(instance._obstacle.Parent.Parent:GetPivot())
+	local offset: CFrame = CFrame.new(finalPos):ToObjectSpace(instance._obstacle.Parent.Parent:GetPivot())
 
 	-- Hover the book obstacle
 	instance._trove:Add(RunService.Heartbeat:Connect(function(deltaTime: number)
 		time = time + deltaTime
 		local offsetY: number = math.sin(time * HOVER_SPEED) * HOVER_HEIGHT
 
-		instance._obstacle:PivotTo(
-			instance._obstacle.Parent.Parent:GetPivot() * offset * CFrame.new(Vector3.new(0, offsetY, 0))
-		)
+		local baseCFrame: CFrame = instance._obstacle.Parent.Parent:GetPivot() * offset
+
+		instance._obstacle:PivotTo(baseCFrame * CFrame.new(Vector3.new(0, offsetY, 0)))
 	end))
 
 	return instance
