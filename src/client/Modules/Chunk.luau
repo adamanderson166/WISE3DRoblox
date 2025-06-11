@@ -29,6 +29,7 @@ function Chunk:New(startingPosition: Vector3, step: number, length: number)
 
 	-- Create a new instance of the Chunk model
 	instance._model = workspace.EndlessRunner.Chunk:Clone()
+	instance._model.Name = step
 	instance._model.Parent = workspace.EndlessRunner
 
 	-- Move to position
@@ -65,34 +66,26 @@ function Chunk:PopulateObstacles()
 	-- Populate the instance with obstacles
 	task.spawn(function()
 		local laneNames: { string } = { "Left", "Middle", "Right" }
+		table.remove(laneNames, math.random(1, #laneNames)) -- Remove a random lane to ensure only two lanes are used
 
-		for i = 1, 2 do
-			-- Generate a random lane
-			local randomLane: number = math.random(1, #laneNames)
+		local obstacles: { Model } = ReplicatedStorage.Assets.EndlessRunner.Obstacles:GetChildren()
 
-			local path: BasePart = self._model:FindFirstChild(laneNames[randomLane] .. "Path")
+		for i = 1, #laneNames do
+			local path: BasePart = self._model:FindFirstChild(laneNames[i] .. "Path")
 
 			if not path then
-				warn("Path not found for lane: " .. laneNames[randomLane])
+				warn("Path not found for lane: " .. laneNames[i])
 				continue
 			end
 
-			-- Remove the lane from the list to avoid duplicates
-			table.remove(laneNames, randomLane)
-
-			-- Generate a random spawn location within the path
-			local locationNames: { string } = { "Center" } -- ignoring front and rear for now
-			local randomLocation: number = math.random(1, #locationNames)
-
-			local spawnLocation: Attachment = path:FindFirstChild(locationNames[randomLocation])
+			local spawnLocation: Attachment = path:FindFirstChild("Center")
 
 			if not spawnLocation then
-				warn("Spawn location not found for lane: " .. locationNames[randomLane])
+				warn("Center attachment not found in path: " .. path.Name)
 				continue
 			end
 
-			local obstacles: { Model } = ReplicatedStorage.Assets.EndlessRunner.Obstacles:GetChildren()
-
+			-- Spawn the obstacle
 			local randomObstacle: Model = obstacles[math.random(1, #obstacles)]
 			local type: string = randomObstacle:GetAttribute("Type")
 
@@ -101,7 +94,8 @@ function Chunk:PopulateObstacles()
 				continue
 			end
 
-			-- Create a new obstacle instance and add it to the trove
+			print(`Path : {path.Name} | Location : {spawnLocation} | Chunk : {self._model.Name} | Obstacle : {type}`)
+
 			self._trove:Add(
 				ObstacleModules[type].New(
 					randomObstacle:Clone(),
@@ -109,9 +103,6 @@ function Chunk:PopulateObstacles()
 					self._model.Obstacles
 				)
 			)
-
-			-- Remove the location from the list to avoid duplicates
-			table.remove(locationNames, randomLocation)
 		end
 	end)
 end
@@ -127,7 +118,6 @@ function Chunk:Destroy()
 		self._model:Destroy()
 	end
 
-	self._trove = nil
 	self._model = nil
 	self._length = nil
 end

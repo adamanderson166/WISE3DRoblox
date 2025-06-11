@@ -21,6 +21,7 @@ end
 
 function ObstacleBase:Clear()
 	self._trove:Clean()
+	self._trove = nil
 end
 
 return ObstacleBase
