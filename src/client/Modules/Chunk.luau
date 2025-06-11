@@ -81,7 +81,7 @@ function Chunk:PopulateObstacles()
 			table.remove(laneNames, randomLane)
 
 			-- Generate a random spawn location within the path
-			local locationNames: { string } = { "Center", "Rear" }
+			local locationNames: { string } = { "Center" } -- ignoring front and rear for now
 			local randomLocation: number = math.random(1, #locationNames)
 
 			local spawnLocation: Attachment = path:FindFirstChild(locationNames[randomLocation])
