@@ -27,13 +27,13 @@ function Book.New(bookModel: Model, location: Attachment, parent: Instance)
 		time = time + deltaTime
 
 		local offsetY: number = math.sin(time * HOVER_SPEED) * HOVER_HEIGHT
-		local basePosition: Vector3 = instance._obstacle:GetPivot().Position
+		local currentPosition: Vector3 = instance._obstacle:GetPivot().Position
 
 		local targetCFrame: CFrame = CFrame.new(
 			Vector3.new(
 				location.WorldCFrame.Position.X,
 				location.WorldCFrame.Position.Y + extents.Y / 2,
-				basePosition.Z
+				currentPosition.Z
 			)
 		)
 

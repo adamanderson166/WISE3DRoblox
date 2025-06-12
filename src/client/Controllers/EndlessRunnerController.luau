@@ -190,6 +190,8 @@ end
 function EndlessRunnerController:StartGame()
 	CharacterController:ToggleControls(false)
 
+	UserInterfaceController:Fade(true, 1):await()
+
 	self:SpawnChunks()
 	self:SetupLanes()
 	self:PopulateChunks()
@@ -201,6 +203,10 @@ function EndlessRunnerController:StartGame()
 	)
 
 	Interface:Show()
+
+	task.wait(3)
+
+	UserInterfaceController:Fade(false, 2):await()
 
 	-- Display a countdown then start the game
 	Interface:StartCountdown(3):andThen(function()

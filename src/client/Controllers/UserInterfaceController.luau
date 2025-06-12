@@ -1,6 +1,7 @@
 -- Services
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
+local Players = game:GetService("Players")
 
 -- Packages
 local Packages = ReplicatedStorage.Packages
@@ -8,10 +9,12 @@ local Promise = require(Packages.Promise)
 
 -- References
 local UiFolder = ReplicatedStorage.Client.Modules.Interface
+local Player: Player = Players.LocalPlayer
 
 -- Variables
 local SoundController
 local Interfaces: { [string]: ModuleScript } = {}
+local Fader: ScreenGui
 
 --
 local UserInterfaceController = {}
@@ -99,6 +102,34 @@ function UserInterfaceController:AddButtonClick(button: TextButton | ImageButton
 			SoundController:Play(sound)
 		end
 	end)
+end
+
+function UserInterfaceController:Fade(fadeIn: boolean, duration: number)
+	Fader.Enabled = true
+	Fader.Main.BackgroundTransparency = fadeIn and 1 or 0
+
+	return Promise.new(function(resolve)
+		duration = duration or 1
+
+		local tween: TweenBase = TweenService:Create(
+			Fader.Main,
+			TweenInfo.new(duration, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut),
+			{
+				BackgroundTransparency = fadeIn and 0 or 1,
+			}
+		)
+
+		tween:Play()
+		tween.Completed:Wait()
+
+		resolve()
+	end)
+end
+
+function UserInterfaceController:OnStart()
+	local playerGui: PlayerGui = Player:WaitForChild("PlayerGui")
+	Fader = playerGui:WaitForChild("Fader", 5)
+	Fader.Enabled = false
 end
 
 function UserInterfaceController:OnInit()
