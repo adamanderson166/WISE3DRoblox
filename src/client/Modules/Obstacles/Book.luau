@@ -13,9 +13,32 @@ local HOVER_SPEED = 2
 local Book = setmetatable({}, ObstacleBase)
 Book.__index = Book
 
-function Book.New(bookModel: Model, position: Vector3, parent: Instance)
+function Book.New(bookModel: Model, location: Attachment, parent: Instance)
 	local instance = setmetatable({}, Book)
-	instance:Init(bookModel, position, parent)
+	instance:Init(bookModel, location.WorldCFrame.Position, parent)
+
+	local time: number = 0
+	local extents: Vector3 = bookModel:GetExtentsSize()
+
+	task.wait(math.random(1, 3)) -- Random delay to avoid all books moving in sync
+
+	-- Hover the book obstacle
+	instance._trove:Add(RunService.Heartbeat:Connect(function(deltaTime: number)
+		time = time + deltaTime
+
+		local offsetY: number = math.sin(time * HOVER_SPEED) * HOVER_HEIGHT
+		local basePosition: Vector3 = instance._obstacle:GetPivot().Position
+
+		local targetCFrame: CFrame = CFrame.new(
+			Vector3.new(
+				location.WorldCFrame.Position.X,
+				location.WorldCFrame.Position.Y + extents.Y / 2,
+				basePosition.Z
+			)
+		)
+
+		instance._obstacle:PivotTo(targetCFrame * CFrame.new(Vector3.new(0, offsetY, 0)))
+	end))
 
 	return instance
 end

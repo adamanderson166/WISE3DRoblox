@@ -8,9 +8,9 @@ local ObstacleBase = require(ReplicatedStorage.Client.Modules.Obstacles.Obstacle
 local Log = setmetatable({}, ObstacleBase)
 Log.__index = Log
 
-function Log.New(logModel: Model, position: Vector3, parent: Instance)
+function Log.New(logModel: Model, location: Attachment, parent: Instance)
 	local instance = setmetatable({}, Log)
-	instance:Init(logModel, position, parent)
+	instance:Init(logModel, location.WorldCFrame.Position, parent)
 	return instance
 end
 

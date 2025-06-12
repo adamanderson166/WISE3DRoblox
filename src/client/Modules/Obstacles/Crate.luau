@@ -8,9 +8,9 @@ local ObstacleBase = require(ReplicatedStorage.Client.Modules.Obstacles.Obstacle
 local Crate = setmetatable({}, ObstacleBase)
 Crate.__index = Crate
 
-function Crate.New(crateModel: Model, position: Vector3, parent: Instance)
+function Crate.New(crateModel: Model, location: Attachment, parent: Instance)
 	local instance = setmetatable({}, Crate)
-	instance:Init(crateModel, position, parent)
+	instance:Init(crateModel, location.WorldCFrame.Position, parent)
 	return instance
 end
 

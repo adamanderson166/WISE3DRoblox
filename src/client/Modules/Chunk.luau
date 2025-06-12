@@ -94,15 +94,9 @@ function Chunk:PopulateObstacles()
 				continue
 			end
 
-			print(`Path : {path.Name} | Location : {spawnLocation} | Chunk : {self._model.Name} | Obstacle : {type}`)
+			--print(`Path : {path.Name} | Location : {spawnLocation} | Chunk : {self._model.Name} | Obstacle : {type}`)
 
-			self._trove:Add(
-				ObstacleModules[type].New(
-					randomObstacle:Clone(),
-					spawnLocation.WorldCFrame.Position + Vector3.new(0, 1, 0),
-					self._model.Obstacles
-				)
-			)
+			self._trove:Add(ObstacleModules[type].New(randomObstacle:Clone(), spawnLocation, self._model.Obstacles))
 		end
 	end)
 end

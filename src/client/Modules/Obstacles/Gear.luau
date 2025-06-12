@@ -12,9 +12,9 @@ local ROTATION_SPEED = 50
 local Gear = setmetatable({}, ObstacleBase)
 Gear.__index = Gear
 
-function Gear.New(gearModel: Model, position: Vector3, parent: Instance)
+function Gear.New(gearModel: Model, location: Attachment, parent: Instance)
 	local instance = setmetatable({}, Gear)
-	instance:Init(gearModel, position, parent)
+	instance:Init(gearModel, location.WorldCFrame.Position, parent)
 
 	-- Rotate the gear obstacle
 	instance._trove:Add(RunService.Heartbeat:Connect(function(deltaTime: number)
