@@ -6,7 +6,7 @@ local RunService = game:GetService("RunService")
 local ObstacleBase = require(ReplicatedStorage.Client.Modules.Obstacles.ObstacleBase)
 
 -- Constants
-local HOVER_HEIGHT = 2
+local HOVER_HEIGHT = 1.5
 local HOVER_SPEED = 2
 
 --

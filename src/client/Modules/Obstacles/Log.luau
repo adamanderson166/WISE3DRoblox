@@ -10,7 +10,7 @@ Log.__index = Log
 
 function Log.New(logModel: Model, location: Attachment, parent: Instance)
 	local instance = setmetatable({}, Log)
-	instance:Init(logModel, location.WorldCFrame.Position, parent)
+	instance:Init(logModel, location.WorldCFrame.Position + Vector3.new(0, 1, 0), parent)
 	return instance
 end
 

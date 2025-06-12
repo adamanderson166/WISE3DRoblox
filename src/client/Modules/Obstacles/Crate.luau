@@ -10,7 +10,7 @@ Crate.__index = Crate
 
 function Crate.New(crateModel: Model, location: Attachment, parent: Instance)
 	local instance = setmetatable({}, Crate)
-	instance:Init(crateModel, location.WorldCFrame.Position, parent)
+	instance:Init(crateModel, location.WorldCFrame.Position + Vector3.new(0, 1, 0), parent)
 	return instance
 end
 
