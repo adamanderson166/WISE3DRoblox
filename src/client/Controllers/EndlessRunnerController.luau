@@ -200,9 +200,9 @@ function EndlessRunnerController:TimeLoop()
 	}
 
 	self._trove:Add(RunService.RenderStepped:Connect(function()
-		if tick() - timers.Distance > 30 then
+		if tick() - timers.Distance > 20 then
 			Multipliers.Distance += 1
-			Multipliers.Chunk += 5
+			Multipliers.Chunk += 3
 
 			timers.Distance = tick()
 		end
