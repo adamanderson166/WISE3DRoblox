@@ -8,6 +8,11 @@ local Trove = require(Packages.Trove)
 -- Constants
 local DEBUG_POSITION = false
 
+local COIN_PROBABILITY: { string: number } = {
+	RemovedLane = 0.5, -- Probability of spawning a coin in the removed lane
+	ChosenLanes = 0.2, -- Probability of spawning a coin in lanes with obstacles
+}
+
 -- Variables
 local ObstacleModules = {}
 
@@ -62,11 +67,32 @@ function Chunk:GetModel()
 	return self._model
 end
 
-function Chunk:PopulateObstacles()
+function Chunk:Populate()
+	local function spawnCoinInLane(lane: string, location: string)
+		if not location then
+			warn("No location available to spawn coin in lane: " .. lane)
+			return
+		end
+
+		local spawnLocation: Attachment = self._model:FindFirstChild(lane .. "Path"):FindFirstChild(location)
+
+		if not spawnLocation then
+			warn("Center attachment not found in path: " .. lane .. "Path")
+			return
+		end
+
+		local coin: Model = ReplicatedStorage.Assets.EndlessRunner.Obstacles.Coin
+		self._trove:Add(ObstacleModules["Coin"].New(coin, spawnLocation, self._model.Obstacles))
+	end
+
 	-- Populate the instance with obstacles
 	task.spawn(function()
 		local laneNames: { string } = { "Left", "Middle", "Right" }
-		table.remove(laneNames, math.random(1, #laneNames)) -- Remove a random lane to ensure only two lanes are used
+
+		local randomIndex: number = math.random(1, #laneNames)
+		local removedLane: string = laneNames[randomIndex]
+
+		table.remove(laneNames, randomIndex) -- Remove a random lane to ensure only two lanes are used
 
 		local obstacles: { Model } = ReplicatedStorage.Assets.EndlessRunner.Obstacles:GetChildren()
 
@@ -96,17 +122,30 @@ function Chunk:PopulateObstacles()
 
 			--print(`Path : {path.Name} | Location : {spawnLocation} | Chunk : {self._model.Name} | Obstacle : {type}`)
 
-			self._trove:Add(ObstacleModules[type].New(randomObstacle:Clone(), spawnLocation, self._model.Obstacles))
+			self._trove:Add(ObstacleModules[type].New(randomObstacle, spawnLocation, self._model.Obstacles))
+
+			-- Can use this to spawn coins in the lanes with obstacles but might not be necessary
+			--[[
+				-- Spawn coin in the lane with probability
+				if math.random() < COIN_PROBABILITY.ChosenLanes then
+					spawnCoinInLane(laneNames[i], math.random() < 0.5 and "Front" or "Rear")
+				end
+			]]
+		end
+
+		-- Spawn coin in the removed lane with probability
+		if math.random() < COIN_PROBABILITY.RemovedLane then
+			spawnCoinInLane(removedLane, "Center")
 		end
 	end)
 end
 
-function Chunk:ClearObstacles()
+function Chunk:Clear()
 	self._trove:Clean()
 end
 
 function Chunk:Destroy()
-	self:ClearObstacles()
+	self:Clear()
 
 	if self._model then
 		self._model:Destroy()
