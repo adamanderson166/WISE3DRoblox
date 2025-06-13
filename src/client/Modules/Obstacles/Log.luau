@@ -11,6 +11,15 @@ Log.__index = Log
 function Log.New(logModel: Model, location: Attachment, parent: Instance)
 	local instance = setmetatable({}, Log)
 	instance:Init(logModel, location.WorldCFrame.Position + Vector3.new(0, 1, 0), parent)
+
+	instance._trove:Add(instance._obstacle.Base.Touched:Once(function(hit: BasePart)
+		local humanoid: Humanoid = hit:FindFirstAncestorOfClass("Model"):FindFirstChild("Humanoid")
+
+		if humanoid then
+			instance:StopGame()
+		end
+	end))
+
 	return instance
 end
 

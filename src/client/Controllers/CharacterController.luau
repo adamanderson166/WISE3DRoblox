@@ -32,6 +32,15 @@ function CharacterController:PlayAnimation(animId: string)
 	self._animation:Play(1, 1, 1.5)
 end
 
+function CharacterController:SetHumanoidState(humanoidState: Enum.HumanoidStateType)
+	local character: Model = Player.Character or Player.CharacterAdded:Wait()
+	local humanoid: Humanoid = character:FindFirstChild("Humanoid")
+
+	if humanoid then
+		humanoid:ChangeState(humanoidState)
+	end
+end
+
 function CharacterController:MoveToLocation(location: Vector3 | CFrame)
 	local character: Model = Player.Character or Player.CharacterAdded:Wait()
 	character:PivotTo(typeof(location) == "CFrame" and location or CFrame.new(location))

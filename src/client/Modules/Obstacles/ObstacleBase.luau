@@ -5,11 +5,16 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Packages = ReplicatedStorage.Packages
 local Trove = require(Packages.Trove)
 
+-- Variables
+local EndlessRunnerController
+
 --
 local ObstacleBase = {}
 ObstacleBase.__index = ObstacleBase
 
 function ObstacleBase:Init(obstacleModel: Model, position: Vector3, parent: Instance)
+	EndlessRunnerController = require(ReplicatedStorage.Client.Controllers.EndlessRunnerController)
+
 	self._trove = Trove.new()
 
 	self._obstacle = obstacleModel:Clone()
@@ -19,9 +24,12 @@ function ObstacleBase:Init(obstacleModel: Model, position: Vector3, parent: Inst
 	self._trove:Add(self._obstacle)
 end
 
+function ObstacleBase:StopGame()
+	EndlessRunnerController:StopGame()
+end
+
 function ObstacleBase:Clear()
 	self._trove:Clean()
-	self._trove = nil
 end
 
 return ObstacleBase

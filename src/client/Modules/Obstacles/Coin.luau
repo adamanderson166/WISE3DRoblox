@@ -8,11 +8,16 @@ local ObstacleBase = require(ReplicatedStorage.Client.Modules.Obstacles.Obstacle
 -- Constants
 local ROTATION_SPEED = 80
 
+-- Variables
+local EndlessRunnerController
+
 --
 local Coin = setmetatable({}, ObstacleBase)
 Coin.__index = Coin
 
 function Coin.New(coinModel: Model, location: Attachment, parent: Instance)
+	EndlessRunnerController = require(ReplicatedStorage.Client.Controllers.EndlessRunnerController)
+
 	local instance = setmetatable({}, Coin)
 	instance:Init(coinModel, location.WorldCFrame.Position + Vector3.new(0, 1.5, 0), parent)
 
@@ -21,6 +26,15 @@ function Coin.New(coinModel: Model, location: Attachment, parent: Instance)
 		instance._obstacle:PivotTo(
 			instance._obstacle:GetPivot() * CFrame.Angles(0, math.rad(ROTATION_SPEED) * deltaTime, 0)
 		)
+	end))
+
+	instance._trove:Add(instance._obstacle.Base.Touched:Once(function(hit: BasePart)
+		local humanoid: Humanoid = hit:FindFirstAncestorOfClass("Model"):FindFirstChild("Humanoid")
+
+		if humanoid then
+			EndlessRunnerController:CoinCollected()
+			instance:Destroy()
+		end
 	end))
 
 	return instance

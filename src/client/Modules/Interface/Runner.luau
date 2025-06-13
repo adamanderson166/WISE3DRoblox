@@ -68,6 +68,10 @@ function Runner:SetDistanceTraveled(distance: number)
 	StatsFrame.DistanceFrame.Value.Text = distance
 end
 
+function Runner:SetCoins(coins: number)
+	StatsFrame.CoinsFrame.Value.Text = coins
+end
+
 function Runner:SetScore(score: number)
 	StatsFrame.ScoreFrame.Value.Text = score
 end

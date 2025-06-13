@@ -23,6 +23,14 @@ function Gear.New(gearModel: Model, location: Attachment, parent: Instance)
 		)
 	end))
 
+	instance._trove:Add(instance._obstacle.Base.Touched:Once(function(hit: BasePart)
+		local humanoid: Humanoid = hit:FindFirstAncestorOfClass("Model"):FindFirstChild("Humanoid")
+
+		if humanoid then
+			instance:StopGame()
+		end
+	end))
+
 	return instance
 end
 

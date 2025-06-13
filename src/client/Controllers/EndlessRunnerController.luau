@@ -19,8 +19,6 @@ local CHUNKS_COUNT = 30
 local CHUNK_RECYCLE_THRESHOLD = 70
 local RUN_ANIM = "rbxassetid://2510198475"
 local JUMP_ANIM = "rbxassetid://2510197830"
-local BASE_DISTANCE_MULTIPLIER = 8
-local BASE_SCORE_MULTIPLIER = 1
 
 local MOVE_LEFT_KEYCODES = {
 	Enum.KeyCode.A,
@@ -39,11 +37,13 @@ local Interface
 local CharacterController
 local UserInterfaceController
 local CameraController
+local SoundController
 
 local ChunksList: { table } = {}
 local TargetCFrame: CFrame = nil
 local PreviousLane: number = 0
 local CurrentLane: number = 0
+local Coins: number = 0
 local SwitchingLanes: boolean = false
 local PlayerLanes: { string: Vector3 } = {
 	[1] = Vector3.zero,
@@ -51,10 +51,11 @@ local PlayerLanes: { string: Vector3 } = {
 	[3] = Vector3.zero,
 }
 local Multipliers: { string: number } = {
-	Distance = 8,
+	Distance = 10,
 	Score = 1,
-	Chunk = 20,
+	Chunk = 25,
 }
+local GameEnded: boolean = false
 
 --
 local EndlessRunnerController = {}
@@ -80,6 +81,10 @@ function EndlessRunnerController:MoveChunks()
 	).Z
 	-- Move chunks down the Z-axis and check for recycling
 	self._trove:Add(RunService.RenderStepped:Connect(function(deltaTime: number)
+		if GameEnded then
+			return
+		end
+
 		for _, chunk: table in ipairs(ChunksList) do
 			local model: Model = chunk:GetModel()
 			model:PivotTo(model:GetPivot() + Vector3.new(0, 0, -Multipliers.Chunk * deltaTime))
@@ -87,6 +92,10 @@ function EndlessRunnerController:MoveChunks()
 
 		-- Recycle the first chunk when it crosses threshold behind the player
 		if ChunksList[1]:GetModel():GetPivot().Position.Z < threshold then
+			if GameEnded then
+				return
+			end
+
 			-- Remove the chunk from the list and clear it
 			local recycledChunk = table.remove(ChunksList, 1)
 			recycledChunk:Clear()
@@ -117,8 +126,8 @@ function EndlessRunnerController:ListenToInput()
 			return
 		end
 
-		if input.KeyCode == Enum.KeyCode.F then
-			CharacterController:PlayAnimation(RUN_ANIM)
+		if input.KeyCode == Enum.KeyCode.Space then
+			CharacterController:Jump()
 		end
 
 		if SwitchingLanes then
@@ -142,8 +151,8 @@ function EndlessRunnerController:ListenToInput()
 			TargetCFrame = CFrame.new(PlayerLanes[CurrentLane]) * CFrame.Angles(0, math.rad(180), 0)
 			PreviousLane = CurrentLane
 			SwitchingLanes = true
-			CharacterController:PlayAnimation(JUMP_ANIM)
-			CharacterController:Jump()
+			--CharacterController:PlayAnimation(JUMP_ANIM)
+			--CharacterController:Jump()
 		end
 	end))
 end
@@ -184,7 +193,7 @@ function EndlessRunnerController:SetupLanes()
 			TargetCFrame = nil
 
 			if SwitchingLanes then
-				CharacterController:PlayAnimation(RUN_ANIM)
+				--CharacterController:PlayAnimation(RUN_ANIM)
 			end
 
 			SwitchingLanes = false
@@ -235,6 +244,13 @@ function EndlessRunnerController:CalculateDistanceAndScore()
 	end))
 end
 
+function EndlessRunnerController:CoinCollected()
+	Coins += 1
+	Interface:SetCoins(Coins)
+
+	SoundController:Play("CoinCollected")
+end
+
 function EndlessRunnerController:StartGame()
 	CharacterController:ToggleControls(false)
 
@@ -259,16 +275,24 @@ function EndlessRunnerController:StartGame()
 
 	-- Display a countdown then start the game
 	Interface:StartCountdown(3):andThen(function()
-		CharacterController:PlayAnimation(RUN_ANIM)
-
 		self:MoveChunks()
 		self:CalculateDistanceAndScore()
 		self:TimeLoop()
 		self:ListenToInput()
+
+		CharacterController:PlayAnimation(RUN_ANIM)
 	end)
 end
 
 function EndlessRunnerController:StopGame()
+	GameEnded = true
+
+	UserInterfaceController:Fade(true, 1):await()
+
+	task.wait(1)
+
+	UserInterfaceController:Fade(false, 1)
+
 	CharacterController:ToggleControls(true)
 	CharacterController:StopAnimation()
 	CharacterController:MoveToLocation(workspace:FindFirstChild("SpawnLocation").CFrame * CFrame.new(0, 5, 0))
@@ -293,6 +317,7 @@ function EndlessRunnerController:OnStart()
 	CharacterController = require(ReplicatedStorage.Client.Controllers.CharacterController)
 	UserInterfaceController = require(ReplicatedStorage.Client.Controllers.UserInterfaceController)
 	CameraController = require(ReplicatedStorage.Client.Controllers.CameraController)
+	SoundController = require(ReplicatedStorage.Client.Controllers.SoundController)
 
 	Interface = UserInterfaceController:GetInterface("Runner")
 end

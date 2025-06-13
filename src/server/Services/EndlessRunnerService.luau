@@ -1,8 +1,15 @@
+-- Services
+local PhysicsService = game:GetService("PhysicsService")
+
+PhysicsService:RegisterCollisionGroup("Player")
+PhysicsService:RegisterCollisionGroup("Obstacle")
+PhysicsService:CollisionGroupSetCollidable("Player", "Obstacle", true)
+
 --
-local EndlessRunnserService = {}
+local EndlessRunnerService = {}
 
-function EndlessRunnserService:OnStart() end
+function EndlessRunnerService:OnStart() end
 
-function EndlessRunnserService:OnInit() end
+function EndlessRunnerService:OnInit() end
 
-return EndlessRunnserService
+return EndlessRunnerService

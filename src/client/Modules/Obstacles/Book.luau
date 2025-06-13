@@ -40,6 +40,14 @@ function Book.New(bookModel: Model, location: Attachment, parent: Instance)
 		instance._obstacle:PivotTo(targetCFrame * CFrame.new(Vector3.new(0, offsetY, 0)))
 	end))
 
+	instance._trove:Add(instance._obstacle.Base.Touched:Once(function(hit: BasePart)
+		local humanoid: Humanoid = hit:FindFirstAncestorOfClass("Model"):FindFirstChild("Humanoid")
+
+		if humanoid then
+			instance:StopGame()
+		end
+	end))
+
 	return instance
 end
 

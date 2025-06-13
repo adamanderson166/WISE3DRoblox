@@ -95,12 +95,12 @@ function UserInterfaceController:AddButtonClick(button: TextButton | ImageButton
 	end
 
 	button.Activated:Connect(function()
-		callback()
-
 		if sound then
 			-- Play sound effect
 			SoundController:Play(sound)
 		end
+
+		callback()
 	end)
 end
 
