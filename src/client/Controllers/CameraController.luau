@@ -69,7 +69,8 @@ end
 function CameraController:FollowTargetWithOffset(
 	target: BasePart,
 	targetDirection: Vector3,
-	cameraFollowOffset: Vector3
+	cameraFollowOffset: Vector3,
+	lerp: boolean?
 )
 	self:SetCameraType(Enum.CameraType.Scriptable)
 
@@ -80,7 +81,13 @@ function CameraController:FollowTargetWithOffset(
 			- (targetDirection * cameraFollowOffset.Z)
 			+ Vector3.new(0, cameraFollowOffset.Y, 0)
 
-		Camera.CFrame = CFrame.new(cameraPosition, targetPosition)
+		local targetCFramame: CFrame = CFrame.new(cameraPosition, targetPosition)
+
+		if lerp then
+			Camera.CFrame = Camera.CFrame:Lerp(targetCFramame, 0.3)
+		else
+			Camera.CFrame = targetCFramame
+		end
 	end
 
 	self._cameraConnection = RunService.RenderStepped:Connect(function()

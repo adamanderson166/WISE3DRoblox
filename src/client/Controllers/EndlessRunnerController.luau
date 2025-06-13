@@ -263,7 +263,8 @@ function EndlessRunnerController:StartGame()
 	CameraController:FollowTargetWithOffset(
 		Player.Character.PrimaryPart,
 		-Player.Character.PrimaryPart.CFrame.LookVector,
-		Vector3.new(0, 8, -15)
+		Vector3.new(0, 8, -15),
+		true
 	)
 
 	Interface:Show()
