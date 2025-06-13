@@ -51,9 +51,9 @@ local PlayerLanes: { string: Vector3 } = {
 	[3] = Vector3.zero,
 }
 local Multipliers: { string: number } = {
-	Distance = 10,
+	Distance = 15,
 	Score = 1,
-	Chunk = 25,
+	Chunk = 30,
 }
 local GameEnded: boolean = false
 
