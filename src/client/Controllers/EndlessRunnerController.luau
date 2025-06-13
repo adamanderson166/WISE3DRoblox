@@ -126,12 +126,12 @@ function EndlessRunnerController:ListenToInput()
 			return
 		end
 
-		if input.KeyCode == Enum.KeyCode.Space then
-			CharacterController:Jump()
-		end
-
 		if SwitchingLanes then
 			return
+		end
+
+		if input.KeyCode == Enum.KeyCode.Space then
+			CharacterController:Jump()
 		end
 
 		if table.find(MOVE_LEFT_KEYCODES, input.KeyCode) then
