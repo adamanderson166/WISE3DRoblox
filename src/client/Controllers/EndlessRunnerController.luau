@@ -16,10 +16,11 @@ local Player: Player = Players.LocalPlayer
 
 -- Constants
 local CHUNKS_COUNT = 30
-local CHUNK_MOVEMENT_SPEED = 20
 local CHUNK_RECYCLE_THRESHOLD = 70
 local RUN_ANIM = "rbxassetid://2510198475"
 local JUMP_ANIM = "rbxassetid://2510197830"
+local BASE_DISTANCE_MULTIPLIER = 8
+local BASE_SCORE_MULTIPLIER = 1
 
 local MOVE_LEFT_KEYCODES = {
 	Enum.KeyCode.A,
@@ -49,6 +50,11 @@ local PlayerLanes: { string: Vector3 } = {
 	[2] = Vector3.zero,
 	[3] = Vector3.zero,
 }
+local Multipliers: { string: number } = {
+	Distance = 8,
+	Score = 1,
+	Chunk = 20,
+}
 
 --
 local EndlessRunnerController = {}
@@ -72,12 +78,11 @@ function EndlessRunnerController:MoveChunks()
 	local threshold: number = (
 		ChunksList[1]:GetModel():GetPivot().Position - Vector3.new(0, 0, CHUNK_RECYCLE_THRESHOLD)
 	).Z
-
 	-- Move chunks down the Z-axis and check for recycling
-	self._trove:Add(RunService.Heartbeat:Connect(function(deltaTime: number)
+	self._trove:Add(RunService.RenderStepped:Connect(function(deltaTime: number)
 		for _, chunk: table in ipairs(ChunksList) do
 			local model: Model = chunk:GetModel()
-			model:PivotTo(model:GetPivot() + Vector3.new(0, 0, -CHUNK_MOVEMENT_SPEED * deltaTime))
+			model:PivotTo(model:GetPivot() + Vector3.new(0, 0, -Multipliers.Chunk * deltaTime))
 		end
 
 		-- Recycle the first chunk when it crosses threshold behind the player
@@ -187,6 +192,49 @@ function EndlessRunnerController:SetupLanes()
 	end))
 end
 
+function EndlessRunnerController:TimeLoop()
+	-- Set up timers for score and distance multipliers
+	local timers: { number } = {
+		Score = tick(),
+		Distance = tick(),
+	}
+
+	self._trove:Add(RunService.RenderStepped:Connect(function()
+		if tick() - timers.Distance > 30 then
+			Multipliers.Distance += 1
+			Multipliers.Chunk += 5
+
+			timers.Distance = tick()
+		end
+
+		-- We might need to adjust the score multiplier based on game design later
+		if tick() - timers.Score > 50 then
+			Multipliers.Score += 1
+			Interface:SetScoreMultiplier(Multipliers.Score)
+			timers.Score = tick()
+		end
+
+		--[[
+			local minutes: number = math.floor(elapsedTime / 60)
+			local seconds: number = math.floor(elapsedTime % 60)
+			Interface:SetTime(string.format("%02d:%02d", minutes, seconds))
+		]]
+	end))
+end
+
+function EndlessRunnerController:CalculateDistanceAndScore()
+	local distanceTraveled: number = 0
+	local score: number = 0
+
+	self._trove:Add(RunService.Heartbeat:Connect(function(deltaTime: number)
+		distanceTraveled += deltaTime * Multipliers.Distance
+		score += deltaTime * Multipliers.Score
+
+		Interface:SetDistanceTraveled(math.floor(distanceTraveled))
+		Interface:SetScore(math.floor(score))
+	end))
+end
+
 function EndlessRunnerController:StartGame()
 	CharacterController:ToggleControls(false)
 
@@ -203,6 +251,7 @@ function EndlessRunnerController:StartGame()
 	)
 
 	Interface:Show()
+	Interface:ToggleStats(true)
 
 	task.wait(3)
 
@@ -213,7 +262,8 @@ function EndlessRunnerController:StartGame()
 		CharacterController:PlayAnimation(RUN_ANIM)
 
 		self:MoveChunks()
-
+		self:CalculateDistanceAndScore()
+		self:TimeLoop()
 		self:ListenToInput()
 	end)
 end
@@ -234,6 +284,7 @@ function EndlessRunnerController:StopGame()
 	ChunksList = {}
 
 	Interface:Hide()
+	Interface:ToggleStats(false)
 
 	UserInterfaceController:ShowInterface("Hud")
 end

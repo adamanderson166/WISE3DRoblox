@@ -14,6 +14,7 @@ local LocalPlayer = Players.LocalPlayer
 local Interface: ScreenGui
 local CountdownFrame: Frame
 local CountdownText: TextLabel
+local StatsFrame: Frame
 
 --
 local Runner = {}
@@ -28,11 +29,10 @@ end
 
 function Runner:StartCountdown(countdown: number)
 	return Promise.new(function(resolve, reject)
-		if not CountdownText then
-			warn("CountdownText not found!")
-			reject()
-		end
+		CountdownFrame.Visible = true
+
 		CountdownText.TextTransparency = 0
+		CountdownText.UIStroke.Transparency = 0
 		CountdownText.Text = countdown
 
 		for i: number = countdown, 1, -1 do
@@ -50,8 +50,30 @@ function Runner:StartCountdown(countdown: number)
 			{ TextTransparency = 1 }
 		):Play()
 
+		TweenService:Create(
+			CountdownText.UIStroke,
+			TweenInfo.new(1, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut, 0, false, 0),
+			{ Transparency = 1 }
+		):Play()
+
 		resolve()
 	end)
+end
+
+function Runner:ToggleStats(toggle: boolean)
+	StatsFrame.Visible = toggle
+end
+
+function Runner:SetDistanceTraveled(distance: number)
+	StatsFrame.DistanceFrame.Value.Text = distance
+end
+
+function Runner:SetScore(score: number)
+	StatsFrame.ScoreFrame.Value.Text = score
+end
+
+function Runner:SetScoreMultiplier(multiplier: number)
+	StatsFrame.ScoreFrame.Multiplier.Text = `x{multiplier}`
 end
 
 function Runner:Init(interfaceController)
@@ -67,6 +89,7 @@ function Runner:Init(interfaceController)
 	Interface = screen:Clone()
 	Interface.Parent = playerGui
 
+	StatsFrame = Interface.StatsFrame
 	CountdownFrame = Interface.CountdownFrame
 	CountdownText = CountdownFrame.CountdownText
 end
