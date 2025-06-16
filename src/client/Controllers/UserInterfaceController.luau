@@ -85,7 +85,7 @@ end
 
 function UserInterfaceController:AddButtonClick(button: TextButton | ImageButton, callback: () -> (), sound: string?)
 	if not button:IsA("TextButton") and not button:IsA("ImageButton") then
-		warn("Expected textButton or imageButton for hover effect.")
+		warn("Expected textButton or imageButton for button click.")
 		return
 	end
 
