@@ -113,7 +113,7 @@ function Journal:SetJournalEntries(journals: table)
 
 		entryFrame.Name = `Entry{i}`
 		entryFrame:FindFirstChild("Date").Text = entry.Date
-		entryFrame:FindFirstChild("Title").Text = `Journal Entry {i}`
+		entryFrame:FindFirstChild("Title").Text = `Thought Entry {i}`
 		entryFrame:FindFirstChild("Icon"):FindFirstChild("Number").Text = i
 
 		entryFrame:FindFirstChild("Button").Activated:Connect(function()

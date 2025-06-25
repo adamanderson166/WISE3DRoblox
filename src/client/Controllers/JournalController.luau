@@ -25,12 +25,12 @@ function JournalController:SubmitJournal(journalText: string)
 
 	if JournalAvailable then
 		JournalService:SubmitJournal(journalText)
-		NotificationController:Notify("Journal submitted successfully!")
+		NotificationController:Notify("Thought submitted successfully!")
 
 		Interface:Hide()
 		UserInterfaceController:ShowInterface("Hud")
 	else
-		NotificationController:Notify("Journal already sbmitted. Come back later!")
+		NotificationController:Notify("Already sbmitted. Come back later!")
 	end
 end
 

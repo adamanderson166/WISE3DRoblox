@@ -252,6 +252,8 @@ function EndlessRunnerController:CoinCollected()
 end
 
 function EndlessRunnerController:StartGame()
+	GameEnded = false
+
 	CharacterController:ToggleControls(false)
 
 	UserInterfaceController:Fade(true, 1):await()
