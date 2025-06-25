@@ -20,6 +20,7 @@ local Template = {
 	QuestionsAnswered = 0,
 	SelfAssessments = 0,
 	MentorSessions = 0,
+	Coins = 0,
 	MinigameStats = {
 		Runs = 0,
 		HighScore = 0,
@@ -110,6 +111,8 @@ function PlayerDataService:OnPlayerRemoving(Player: Player)
 	end
 end
 
+----------------------------------------------------------------------------------------------------------------
+
 function PlayerDataService:UpdatePlayerStreak(player: Player, streakNumber: number, timeStamp: number)
 	local replica: table = self:Get(player)
 	replica.Data.DailyCheckInStreak = streakNumber
@@ -124,6 +127,34 @@ function PlayerDataService:SubmitJournal(player: Player, journal: string, timeSt
 
 	replica.Data.Journals = journals
 	replica.Data.LastJournalSubmissionTimeStamp = timeStamp
+end
+
+function PlayerDataService:SetCoins(player: Player, coins: number)
+	local replica: table = self:Get(player)
+
+	local currentCoins = replica.Data:Get().Coins + coins
+
+	replica.Data.Coins = currentCoins
+end
+
+function PlayerDataService:SetMinigameStats(
+	player: Player,
+	stats: {
+		Runs: number,
+		Score: number,
+		Deaths: number,
+		Distance: number,
+	}
+)
+	local replica: table = self:Get(player)
+	local currentStats = replica.Data:Get().MinigameStats
+
+	currentStats.Runs += stats.Runs or 1
+	currentStats.HighScore = math.max(currentStats.HighScore, stats.Score or 0)
+	currentStats.Deaths += stats.Deaths or 0
+	currentStats.MaxDistance = math.max(currentStats.MaxDistance, stats.Distance or 0)
+
+	replica.Data.MinigameStats = currentStats
 end
 
 return PlayerDataService

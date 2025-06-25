@@ -7,6 +7,7 @@ local Players = game:GetService("Players")
 -- Packages
 local Packages = ReplicatedStorage.Packages
 local Trove = require(Packages.Trove)
+local Cardinal = require(Packages.Cardinal)
 
 -- Modules
 local Chunk = require(ReplicatedStorage.Client.Modules.Chunk)
@@ -38,12 +39,16 @@ local CharacterController
 local UserInterfaceController
 local CameraController
 local SoundController
+local EndlessRunnerService
+local CurrencyService
 
 local ChunksList: { table } = {}
 local TargetCFrame: CFrame = nil
 local PreviousLane: number = 0
 local CurrentLane: number = 0
 local Coins: number = 0
+local Score: number = 0
+local DistanceTraveled: number = 0
 local SwitchingLanes: boolean = false
 local PlayerLanes: { string: Vector3 } = {
 	[1] = Vector3.zero,
@@ -232,15 +237,15 @@ function EndlessRunnerController:TimeLoop()
 end
 
 function EndlessRunnerController:CalculateDistanceAndScore()
-	local distanceTraveled: number = 0
-	local score: number = 0
+	Score = 0
+	DistanceTraveled = 0
 
 	self._trove:Add(RunService.Heartbeat:Connect(function(deltaTime: number)
-		distanceTraveled += deltaTime * Multipliers.Distance
-		score += deltaTime * Multipliers.Score
+		DistanceTraveled += deltaTime * Multipliers.Distance
+		Score += deltaTime * Multipliers.Score
 
-		Interface:SetDistanceTraveled(math.floor(distanceTraveled))
-		Interface:SetScore(math.floor(score))
+		Interface:SetDistanceTraveled(math.floor(DistanceTraveled))
+		Interface:SetScore(math.floor(Score))
 	end))
 end
 
@@ -287,7 +292,7 @@ function EndlessRunnerController:StartGame()
 	end)
 end
 
-function EndlessRunnerController:StopGame()
+function EndlessRunnerController:StopGame(death: boolean)
 	GameEnded = true
 
 	UserInterfaceController:Fade(true, 1):await()
@@ -314,6 +319,21 @@ function EndlessRunnerController:StopGame()
 	Interface:ToggleStats(false)
 
 	UserInterfaceController:ShowInterface("Hud")
+
+	CurrencyService:SetCoins(Coins)
+
+	EndlessRunnerService:SetMinigameStats({
+		Runs = 1,
+		Score = math.floor(Score),
+		Deaths = death and 1 or 0,
+		Distance = math.floor(DistanceTraveled),
+	})
+
+	CurrencyService:SetCoins(Coins)
+
+	Coins = 0
+	Score = 0
+	DistanceTraveled = 0
 end
 
 function EndlessRunnerController:OnStart()
@@ -321,6 +341,9 @@ function EndlessRunnerController:OnStart()
 	UserInterfaceController = require(ReplicatedStorage.Client.Controllers.UserInterfaceController)
 	CameraController = require(ReplicatedStorage.Client.Controllers.CameraController)
 	SoundController = require(ReplicatedStorage.Client.Controllers.SoundController)
+
+	EndlessRunnerService = Cardinal.GetService("EndlessRunnerService")
+	CurrencyService = Cardinal.GetService("CurrencyService")
 
 	Interface = UserInterfaceController:GetInterface("Runner")
 end

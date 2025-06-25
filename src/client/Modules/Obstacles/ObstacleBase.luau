@@ -25,7 +25,7 @@ function ObstacleBase:Init(obstacleModel: Model, position: Vector3, parent: Inst
 end
 
 function ObstacleBase:StopGame()
-	EndlessRunnerController:StopGame()
+	EndlessRunnerController:StopGame(true)
 end
 
 function ObstacleBase:Clear()

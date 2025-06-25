@@ -11,10 +11,13 @@ local Promise = require(Packages.Promise)
 local LocalPlayer = Players.LocalPlayer
 
 -- Variables
+local EndlessRunnerController
+
 local Interface: ScreenGui
 local CountdownFrame: Frame
 local CountdownText: TextLabel
 local StatsFrame: Frame
+local ExitButton: TextButton
 
 --
 local Runner = {}
@@ -96,6 +99,13 @@ function Runner:Init(interfaceController)
 	StatsFrame = Interface.StatsFrame
 	CountdownFrame = Interface.CountdownFrame
 	CountdownText = CountdownFrame.CountdownText
+	ExitButton = Interface.ExitButton
+
+	EndlessRunnerController = require(ReplicatedStorage.Client.Controllers.EndlessRunnerController)
+
+	interfaceController:AddButtonClick(ExitButton, function()
+		EndlessRunnerController:StopGame(false)
+	end, "ClickClose")
 end
 
 return Runner
