@@ -185,11 +185,11 @@ function EndlessRunnerController:SetupLanes()
 		end
 
 		local characterCFrame: CFrame = character:GetPivot()
-		local targetCFrame: CFrame = characterCFrame:Lerp(TargetCFrame, 0.05)
+		local targetCFrame: CFrame = characterCFrame:Lerp(TargetCFrame, 0.1)
 		character:PivotTo(targetCFrame)
 
 		-- Player reached the target position
-		if (characterCFrame.Position - TargetCFrame.Position).Magnitude < 1 then
+		if (characterCFrame.Position - TargetCFrame.Position).Magnitude < 0.5 then
 			TargetCFrame = nil
 
 			if SwitchingLanes then

@@ -22,11 +22,13 @@ function Book.New(bookModel: Model, location: Attachment, parent: Instance)
 
 	task.wait(math.random(1, 3)) -- Random delay to avoid all books moving in sync
 
+	local randomOffset: number = math.random() * 2 * math.pi -- Random offset for the hover effect
+
 	-- Hover the book obstacle
 	instance._trove:Add(RunService.Heartbeat:Connect(function(deltaTime: number)
 		time = time + deltaTime
 
-		local offsetY: number = math.sin(time * HOVER_SPEED) * HOVER_HEIGHT
+		local offsetY: number = math.sin((time * HOVER_SPEED) + randomOffset) * HOVER_HEIGHT
 		local currentPosition: Vector3 = instance._obstacle:GetPivot().Position
 
 		local targetCFrame: CFrame = CFrame.new(
