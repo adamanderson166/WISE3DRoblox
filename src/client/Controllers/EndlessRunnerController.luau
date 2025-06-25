@@ -283,6 +283,10 @@ function EndlessRunnerController:StartGame()
 
 	-- Display a countdown then start the game
 	Interface:StartCountdown(3):andThen(function()
+		if GameEnded then
+			return
+		end
+
 		self:MoveChunks()
 		self:CalculateDistanceAndScore()
 		self:TimeLoop()
