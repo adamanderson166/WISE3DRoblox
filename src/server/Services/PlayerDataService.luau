@@ -17,7 +17,8 @@ local Template = {
 	Xp = 100,
 	DailyCheckInStreak = 0,
 	LastCheckInTimeStamp = 0,
-	QuestionsAnswered = 0,
+	QuestionsAnswered = {},
+	LastQuestionTimeStamp = 0,
 	SelfAssessments = 0,
 	MentorSessions = 0,
 	Coins = 0,
@@ -135,6 +136,28 @@ function PlayerDataService:SetCoins(player: Player, coins: number)
 	local currentCoins = replica.Data:Get().Coins + coins
 
 	replica.Data.Coins = currentCoins
+end
+
+function PlayerDataService:SetQuestionAnswered(player: Player, questionId: string, correct: boolean, timeStamp: number)
+	local replica: table = self:Get(player)
+
+	local questionsAnswered: table = replica.Data:Get().QuestionsAnswered
+
+	-- If the question has already been answered, do nothing
+	-- Just in case the client tries to submit the same question multiple times
+	if questionsAnswered[questionId] then
+		return
+	end
+
+	questionsAnswered[questionId] = { Correct = correct }
+
+	replica.Data.QuestionsAnswered = questionsAnswered
+	replica.Data.LastQuestionTimeStamp = timeStamp
+end
+
+function PlayerDataService:ResetQuestionsAnswered(player: Player)
+	local replica: table = self:Get(player)
+	replica.Data.QuestionsAnswered = {}
 end
 
 function PlayerDataService:SetMinigameStats(

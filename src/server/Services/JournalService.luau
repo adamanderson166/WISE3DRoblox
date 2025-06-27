@@ -6,7 +6,7 @@ local ServerStorage = game:GetService("ServerStorage")
 local Packages = ReplicatedStorage.Packages
 local Promise = require(Packages.Promise)
 
--- References
+-- Variables
 local PlayerDataService
 
 -- Constants

@@ -33,8 +33,8 @@ function ProfileController:OnStart()
 		Interface:SetJournals(#journals)
 	end)
 
-	PlayerDataController:ObserveChange("QuestionsAnswered", function(count: number)
-		Interface:SetQuestionsAnswered(count)
+	PlayerDataController:ObserveChange("QuestionsAnswered", function(questions: table)
+		Interface:SetQuestionsAnswered(#questions)
 	end)
 
 	PlayerDataController:ObserveChange("SelfAssessments", function(count: number)
