@@ -13,6 +13,7 @@ local QuestionData = require(ReplicatedStorage.Client.Modules.QuestionData)
 local UserInterfaceController
 local QuestionOfDayService
 local PlayerDataController
+local NotificationController
 
 local Interface
 local CurrentQuestion: table
@@ -81,9 +82,20 @@ function QuestionOfDayController:SubmitAnswer(index: number)
 	Interface:Hide()
 end
 
+function QuestionOfDayController:AttemptQuestion()
+	local questionAvailable: boolean = QuestionOfDayService:QuestionAvailable()
+
+	if questionAvailable then
+		self:DisplayRandomQuestion()
+	else
+		NotificationController:Notify("You have already submitted a question for today.")
+	end
+end
+
 function QuestionOfDayController:OnStart()
 	UserInterfaceController = require(ReplicatedStorage.Client.Controllers.UserInterfaceController)
 	PlayerDataController = require(ReplicatedStorage.Client.Controllers.PlayerDataController)
+	NotificationController = require(ReplicatedStorage.Client.Controllers.NotificationController)
 	QuestionOfDayService = Cardinal.GetService("QuestionOfDayService")
 
 	Interface = UserInterfaceController:GetInterface("QuestionOfDay")

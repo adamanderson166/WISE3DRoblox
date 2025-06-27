@@ -12,6 +12,7 @@ local LocalPlayer = Players.LocalPlayer
 -- Variables
 local DailyCheckInController
 local EndlessRunnerController
+local QuestionOfDayController
 
 local Interface: ScreenGui
 local CloseButton: TextButton
@@ -122,6 +123,7 @@ function Profile:Init(interfaceController)
 
 	DailyCheckInController = require(ReplicatedStorage.Client.Controllers.DailyCheckInController)
 	EndlessRunnerController = require(ReplicatedStorage.Client.Controllers.EndlessRunnerController)
+	QuestionOfDayController = require(ReplicatedStorage.Client.Controllers.QuestionOfDayController)
 
 	task.spawn(function()
 		local dailyCheckInButton: TextButton = Interface.Main:FindFirstChild("DailyCheckInButton", true)
@@ -142,7 +144,9 @@ function Profile:Init(interfaceController)
 			interfaceController:ShowInterface("Journal")
 		end, "Click")
 
-		interfaceController:AddButtonClick(goToQuestionButton, function() end, "Click")
+		interfaceController:AddButtonClick(goToQuestionButton, function()
+			QuestionOfDayController:AttemptQuestion()
+		end, "Click")
 
 		interfaceController:AddButtonClick(goToSelfAssessmentButton, function() end, "Click")
 

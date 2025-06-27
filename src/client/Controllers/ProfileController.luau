@@ -1,6 +1,10 @@
 -- Services
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+-- Packages
+local Packages = ReplicatedStorage.Packages
+local TableUtil = require(Packages.TableUtil)
+
 -- Variables
 local PlayerDataController
 local UserInterfaceController
@@ -34,7 +38,7 @@ function ProfileController:OnStart()
 	end)
 
 	PlayerDataController:ObserveChange("QuestionsAnswered", function(questions: table)
-		Interface:SetQuestionsAnswered(#questions)
+		Interface:SetQuestionsAnswered(#TableUtil.Keys(questions))
 	end)
 
 	PlayerDataController:ObserveChange("SelfAssessments", function(count: number)
