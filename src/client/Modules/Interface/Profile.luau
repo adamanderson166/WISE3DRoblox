@@ -101,7 +101,6 @@ function Profile:Init(interfaceController)
 
 	CloseButton = Interface:FindFirstChild("CloseButton", true)
 
-	interfaceController:AddHoverEffect(CloseButton, true)
 	interfaceController:AddButtonClick(CloseButton, function()
 		self:Hide()
 		interfaceController:ShowInterface("Hud")
