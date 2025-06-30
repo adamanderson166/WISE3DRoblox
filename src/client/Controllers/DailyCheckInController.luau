@@ -28,7 +28,7 @@ function DailyCheckInController:CheckIn()
 end
 
 function DailyCheckInController:MoveToDailyCheckInPortal()
-	local dailyLoginSpawn: BasePart = workspace:FindFirstChild("DailyCheckInSpawn")
+	local dailyLoginSpawn: BasePart = workspace:FindFirstChild("DailyCheckInSpawn", true)
 
 	local checkInTabletPosition: BasePart = workspace:FindFirstChild("CheckInTablet", true):GetPivot().Position
 
