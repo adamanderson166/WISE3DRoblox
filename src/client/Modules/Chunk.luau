@@ -9,7 +9,7 @@ local Trove = require(Packages.Trove)
 local DEBUG_POSITION = false
 
 local COIN_PROBABILITY: { string: number } = {
-	RemovedLane = 0.5, -- Probability of spawning a coin in the removed lane
+	RemovedLane = 0.4, -- Probability of spawning a coin in the removed lane
 	ChosenLanes = 0.2, -- Probability of spawning a coin in lanes with obstacles
 }
 

@@ -19,7 +19,7 @@ function CharacterController:StopAnimation()
 	end
 end
 
-function CharacterController:PlayAnimation(animId: string)
+function CharacterController:PlayAnimation(animId: string, fadeValue: number, weight: number, speed: number)
 	self:StopAnimation()
 
 	local character: Model = Player.Character or Player.CharacterAdded:Wait()
@@ -29,7 +29,7 @@ function CharacterController:PlayAnimation(animId: string)
 	animation.AnimationId = animId
 
 	self._animation = humanoid.Animator:LoadAnimation(animation)
-	self._animation:Play(0, 1, 1.5)
+	self._animation:Play(fadeValue, weight, speed)
 end
 
 function CharacterController:SetHumanoidState(humanoidState: Enum.HumanoidStateType)

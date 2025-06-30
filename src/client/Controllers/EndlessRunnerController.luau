@@ -287,12 +287,14 @@ function EndlessRunnerController:StartGame()
 			return
 		end
 
-		CharacterController:PlayAnimation(RUN_ANIM)
+		CharacterController:PlayAnimation(RUN_ANIM, 0, 10, 1.25)
 
-		self:CalculateDistanceAndScore()
-		self:TimeLoop()
-		self:ListenToInput()
-		self:MoveChunks()
+		task.delay(0.5, function()
+			self:CalculateDistanceAndScore()
+			self:TimeLoop()
+			self:ListenToInput()
+			self:MoveChunks()
+		end)
 	end)
 end
 
