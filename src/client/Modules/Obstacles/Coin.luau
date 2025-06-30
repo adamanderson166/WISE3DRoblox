@@ -28,7 +28,13 @@ function Coin.New(coinModel: Model, location: Attachment, parent: Instance)
 		)
 	end))
 
-	instance._trove:Add(instance._obstacle.Base.Touched:Once(function(hit: BasePart)
+	local base: BasePart = instance._obstacle:WaitForChild("Base", 5)
+
+	if not base then
+		return
+	end
+
+	instance._trove:Add(base.Touched:Once(function(hit: BasePart)
 		local humanoid: Humanoid = hit:FindFirstAncestorOfClass("Model"):FindFirstChild("Humanoid")
 
 		if humanoid then

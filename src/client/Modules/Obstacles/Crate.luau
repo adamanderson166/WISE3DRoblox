@@ -12,7 +12,13 @@ function Crate.New(crateModel: Model, location: Attachment, parent: Instance)
 	local instance = setmetatable({}, Crate)
 	instance:Init(crateModel, location.WorldCFrame.Position + Vector3.new(0, 1, 0), parent)
 
-	instance._trove:Add(instance._obstacle.Base.Touched:Once(function(hit: BasePart)
+	local base: BasePart = instance._obstacle:WaitForChild("Base", 5)
+
+	if not base then
+		return
+	end
+
+	instance._trove:Add(base.Touched:Once(function(hit: BasePart)
 		local humanoid: Humanoid = hit:FindFirstAncestorOfClass("Model"):FindFirstChild("Humanoid")
 
 		if humanoid then
