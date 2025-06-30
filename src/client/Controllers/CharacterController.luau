@@ -29,7 +29,7 @@ function CharacterController:PlayAnimation(animId: string)
 	animation.AnimationId = animId
 
 	self._animation = humanoid.Animator:LoadAnimation(animation)
-	self._animation:Play(1, 1, 1.5)
+	self._animation:Play(0, 1, 1.5)
 end
 
 function CharacterController:SetHumanoidState(humanoidState: Enum.HumanoidStateType)
