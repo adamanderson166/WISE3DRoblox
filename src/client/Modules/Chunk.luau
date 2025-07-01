@@ -122,8 +122,11 @@ function Chunk:Populate()
 
 			--print(`Path : {path.Name} | Location : {spawnLocation} | Chunk : {self._model.Name} | Obstacle : {type}`)
 
-			self._trove:Add(ObstacleModules[type].New(randomObstacle, spawnLocation, self._model.Obstacles))
+			local obstacle: table = ObstacleModules[type].New(randomObstacle, spawnLocation, self._model.Obstacles)
 
+			if obstacle then
+				self._trove:Add(obstacle)
+			end
 			-- Can use this to spawn coins in the lanes with obstacles but might not be necessary
 			--[[
 				-- Spawn coin in the lane with probability
