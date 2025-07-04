@@ -20,7 +20,8 @@ local Template = {
 	QuestionsAnswered = {},
 	LastQuestionTimeStamp = 0,
 	SelfAssessments = 0,
-	MentorSessions = 0,
+	LastMentorSessionTimeStamp = 0,
+	MentorSessions = {},
 	Coins = 0,
 	MinigameStats = {
 		Runs = 0,
@@ -178,6 +179,19 @@ function PlayerDataService:SetMinigameStats(
 	currentStats.MaxDistance = math.max(currentStats.MaxDistance, stats.Distance or 0)
 
 	replica.Data.MinigameStats = currentStats
+end
+
+function PlayerDataService:SetMentorSession(player: Player, mentorName: string, progress: number, timeStamp: number)
+	local replica: table = self:Get(player)
+
+	local mentorSessions: { [string]: { Progress: number } } = replica.Data:Get().MentorSessions
+
+	mentorSessions[mentorName] = {
+		Progress = progress,
+	}
+
+	replica.Data.MentorSessions = mentorSessions
+	replica.Data.LastMentorSessionTimeStamp = timeStamp
 end
 
 return PlayerDataService

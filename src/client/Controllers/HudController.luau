@@ -11,6 +11,14 @@ local Interface
 --
 local HudController = {}
 
+function HudController:Show()
+	Interface:Show()
+end
+
+function HudController:Hide()
+	Interface:Hide()
+end
+
 function HudController:OnStart()
 	UserInterfaceController = require(ReplicatedStorage.Client.Controllers.UserInterfaceController)
 
