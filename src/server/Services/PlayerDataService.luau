@@ -186,9 +186,15 @@ function PlayerDataService:SetMentorSession(player: Player, mentorName: string, 
 
 	local mentorSessions: { [string]: { Progress: number } } = replica.Data:Get().MentorSessions
 
-	mentorSessions[mentorName] = {
-		Progress = progress,
-	}
+	if not mentorSessions[mentorName] then
+		mentorSessions[mentorName] = { Progress = 1, Count = 0 }
+	end
+
+	if mentorSessions[mentorName] then
+		mentorSessions[mentorName].Count = mentorSessions[mentorName].Count + 1
+	else
+		mentorSessions[mentorName].Count = 1
+	end
 
 	replica.Data.MentorSessions = mentorSessions
 	replica.Data.LastMentorSessionTimeStamp = timeStamp

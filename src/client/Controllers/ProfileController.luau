@@ -45,8 +45,14 @@ function ProfileController:OnStart()
 		Interface:SetSelfAssessments(count)
 	end)
 
-	PlayerDataController:ObserveChange("MentorSessions", function(count: number)
-		Interface:SetMentorSessions(count)
+	PlayerDataController:ObserveChange("MentorSessions", function(mentorSessions: table)
+		local total: number = 0
+
+		for _, session: table in pairs(mentorSessions) do
+			total += session.Count
+		end
+
+		Interface:SetMentorSessions(total)
 	end)
 
 	PlayerDataController:ObserveChange("MinigameStats", function(stats: table)
