@@ -38,11 +38,13 @@ function MentorSessionController:TeleportToMentor(mentorName: string)
 end
 
 function MentorSessionController:StartMentorSession(mentorName: string, sessionEndCallback: () -> ())
-	local available: boolean = MentorSessionService:MentorSessionAvailable()
+	local available: boolean = MentorSessionService:MentorSessionAvailable(mentorName)
 
 	if not available then
 		sessionEndCallback()
-		NotificationController:Notify("You have already taken a mentor session for today.")
+		NotificationController:Notify(
+			`You have already taken a session by <font color="#2a66bf">{mentorName}</font> for today.`
+		)
 		return
 	end
 

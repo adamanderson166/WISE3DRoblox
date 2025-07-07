@@ -17,7 +17,7 @@ local MentorSessionService = {
 	Client = {},
 }
 
-function MentorSessionService:MentorSessionAvailable(player: Player)
+function MentorSessionService:MentorSessionAvailable(player: Player, mentorName: string)
 	local replica = PlayerDataService:Get(player, 5):expect()
 
 	if not replica then
@@ -27,14 +27,14 @@ function MentorSessionService:MentorSessionAvailable(player: Player)
 	local available: boolean = false
 	local data: table = replica.Data:Get()
 
-	local LastMentorSessionTimeStamp: number = data.LastMentorSessionTimeStamp
+	local mentorData: table = data.MentorSessions[mentorName]
 
-	-- If LastMentorSessionTimeStamp is 0, it means the player has never had a mentor session
-	if LastMentorSessionTimeStamp == 0 then
+	-- If no mentor data, it means the player has never had a mentor session
+	if not mentorData then
 		available = true
 	else
 		local currentTime: number = os.time()
-		local timeDifferenceInDays: number = math.floor((currentTime - LastMentorSessionTimeStamp) / SECONDS_IN_A_DAY)
+		local timeDifferenceInDays: number = math.floor((currentTime - mentorData.TimeStamp) / SECONDS_IN_A_DAY)
 
 		-- Player came back after a day or more
 		if timeDifferenceInDays >= 1 then
@@ -48,8 +48,8 @@ function MentorSessionService:MentorSessionAvailable(player: Player)
 	return available
 end
 
-function MentorSessionService.Client:MentorSessionAvailable(player: Player)
-	return self.Server:MentorSessionAvailable(player)
+function MentorSessionService.Client:MentorSessionAvailable(player: Player, mentorName: string)
+	return self.Server:MentorSessionAvailable(player, mentorName)
 end
 
 function MentorSessionService.Client:SetMentorSession(player: Player, mentorName: string, progress: number)
