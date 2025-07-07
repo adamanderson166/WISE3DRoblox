@@ -45,7 +45,7 @@ local Replicas: { [Player]: Replica } = {}
 local PlayerDataService = {}
 
 function PlayerDataService:OnInit()
-	Store = DataKeep.GetStore("PlayerData_3", Template, {}):expect()
+	Store = DataKeep.GetStore("PlayerData_4", Template, {}):expect()
 
 	if RunService:IsStudio() then -- Causes the Data in Studio to be "fresh" i.e Mock data
 		Store = Store.Mock
