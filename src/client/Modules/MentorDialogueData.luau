@@ -97,6 +97,10 @@ local Data = table.freeze({
 --
 local MentorDialogueData = {}
 
+function MentorDialogueData:GetData()
+	return Data
+end
+
 function MentorDialogueData:GetMentorDialoguesData(mentorName: string)
 	local mentorData: table = Data[mentorName]
 

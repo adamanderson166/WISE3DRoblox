@@ -79,7 +79,7 @@ function QuestionOfDayController:SubmitAnswer(index: number)
 
 	QuestionOfDayService:SubmitQuestion(CurrentQuestion.Id, correct)
 
-	Interface:Hide()
+	return correct
 end
 
 function QuestionOfDayController:AttemptQuestion()

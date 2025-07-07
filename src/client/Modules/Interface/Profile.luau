@@ -149,7 +149,10 @@ function Profile:Init(interfaceController)
 
 		interfaceController:AddButtonClick(goToSelfAssessmentButton, function() end, "Click")
 
-		interfaceController:AddButtonClick(goToMentorSessionButton, function() end, "Click")
+		interfaceController:AddButtonClick(goToMentorSessionButton, function()
+			self:Hide()
+			interfaceController:ShowInterface("MentorList")
+		end, "Click")
 
 		interfaceController:AddButtonClick(goToObbyButton, function()
 			self:Hide()
