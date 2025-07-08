@@ -184,7 +184,8 @@ end
 function PlayerDataService:SetMentorSession(player: Player, mentorName: string, progress: number, timeStamp: number)
 	local replica: table = self:Get(player)
 
-	local mentorSessions: { [string]: { Progress: number } } = replica.Data:Get().MentorSessions
+	local mentorSessions: { [string]: { Progress: number, Count: number, TimeStamp: number } } =
+		replica.Data:Get().MentorSessions
 
 	if not mentorSessions[mentorName] then
 		mentorSessions[mentorName] = { Progress = 1, Count = 0, TimeStamp = timeStamp }
