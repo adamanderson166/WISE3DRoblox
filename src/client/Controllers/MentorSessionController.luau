@@ -14,6 +14,7 @@ local UserInterfaceController
 local HudController
 local MentorSessionService
 local NotificationController
+local CharacterController
 
 local Interface
 local MentorSession
@@ -21,12 +22,29 @@ local MentorSession
 --
 local MentorSessionController = {}
 
+function MentorSessionController:TeleportToMentor(mentorName: string)
+	local mentor: Folder = workspace.World.Mentors:FindFirstChild(mentorName)
+
+	if not mentor then
+		warn(`Mentor {mentorName} not found in workspace!`)
+		return
+	end
+
+	local cFrame: CFrame = CFrame.new(mentor.SpawnPart.CFrame.Position, mentor.Character:GetPivot().Position)
+
+	CharacterController:MoveToLocation(cFrame)
+
+	HudController:Show()
+end
+
 function MentorSessionController:StartMentorSession(mentorName: string, sessionEndCallback: () -> ())
-	local available: boolean = MentorSessionService:MentorSessionAvailable()
+	local available: boolean = MentorSessionService:MentorSessionAvailable(mentorName)
 
 	if not available then
 		sessionEndCallback()
-		NotificationController:Notify("You have already taken a mentor session for today.")
+		NotificationController:Notify(
+			`You have already taken a session by <font color="#2a66bf">{mentorName}</font> for today.`
+		)
 		return
 	end
 
@@ -78,6 +96,7 @@ function MentorSessionController:OnStart()
 	UserInterfaceController = require(ReplicatedStorage.Client.Controllers.UserInterfaceController)
 	HudController = require(ReplicatedStorage.Client.Controllers.HudController)
 	NotificationController = require(ReplicatedStorage.Client.Controllers.NotificationController)
+	CharacterController = require(ReplicatedStorage.Client.Controllers.CharacterController)
 
 	MentorSessionService = Cardinal.GetService("MentorSessionService")
 

@@ -45,7 +45,7 @@ local Replicas: { [Player]: Replica } = {}
 local PlayerDataService = {}
 
 function PlayerDataService:OnInit()
-	Store = DataKeep.GetStore("PlayerData_3", Template, {}):expect()
+	Store = DataKeep.GetStore("PlayerData_4", Template, {}):expect()
 
 	if RunService:IsStudio() then -- Causes the Data in Studio to be "fresh" i.e Mock data
 		Store = Store.Mock
@@ -184,10 +184,11 @@ end
 function PlayerDataService:SetMentorSession(player: Player, mentorName: string, progress: number, timeStamp: number)
 	local replica: table = self:Get(player)
 
-	local mentorSessions: { [string]: { Progress: number } } = replica.Data:Get().MentorSessions
+	local mentorSessions: { [string]: { Progress: number, Count: number, TimeStamp: number } } =
+		replica.Data:Get().MentorSessions
 
 	if not mentorSessions[mentorName] then
-		mentorSessions[mentorName] = { Progress = 1, Count = 0 }
+		mentorSessions[mentorName] = { Progress = 1, Count = 0, TimeStamp = timeStamp }
 	end
 
 	if mentorSessions[mentorName] then
@@ -197,7 +198,6 @@ function PlayerDataService:SetMentorSession(player: Player, mentorName: string, 
 	end
 
 	replica.Data.MentorSessions = mentorSessions
-	replica.Data.LastMentorSessionTimeStamp = timeStamp
 end
 
 return PlayerDataService

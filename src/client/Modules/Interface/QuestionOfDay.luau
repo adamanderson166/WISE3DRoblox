@@ -12,17 +12,21 @@ local LocalPlayer = Players.LocalPlayer
 
 -- Variables
 local QuestionOfDayController
+local SoundController
 
 local Interface: ScreenGui
 local QuestionText: TextLabel
 local AnswerButtons: { TextButton } = {}
 
+-- Constants
+local BASE_COLOR = Color3.fromRGB(179, 121, 5)
+local CORRECT_COLOR = Color3.fromRGB(37, 125, 21)
+local INCORRECT_COLOR = Color3.fromRGB(179, 44, 11)
+
 --
 local QuestionOfDay = {}
 
 function QuestionOfDay:Show()
-	Interface.Main.UIScale.Scale = 0
-
 	Interface.Enabled = true
 
 	TweenService
@@ -76,6 +80,7 @@ function QuestionOfDay:Init(interfaceController)
 	Interface.Parent = playerGui
 
 	QuestionOfDayController = require(ReplicatedStorage.Client.Controllers.QuestionOfDayController)
+	SoundController = require(ReplicatedStorage.Client.Controllers.SoundController)
 
 	QuestionText = Interface.Main.QuestionText
 
@@ -86,8 +91,30 @@ function QuestionOfDay:Init(interfaceController)
 	for index: number, button: TextButton in ipairs(AnswerButtons) do
 		interfaceController:AddHoverEffect(button, true)
 		interfaceController:AddButtonClick(button, function()
-			QuestionOfDayController:SubmitAnswer(index)
-		end, "Click")
+			AnswerButtons[1].Interactable = false
+			AnswerButtons[2].Interactable = false
+			AnswerButtons[3].Interactable = false
+
+			local status: boolean = QuestionOfDayController:SubmitAnswer(index)
+
+			if status then
+				button.BackgroundColor3 = CORRECT_COLOR
+			else
+				button.BackgroundColor3 = INCORRECT_COLOR
+			end
+
+			SoundController:Play(status and "CorrectAnswer" or "WrongAnswer")
+
+			task.delay(2, function()
+				self:Hide()
+
+				button.BackgroundColor3 = BASE_COLOR
+
+				AnswerButtons[1].Interactable = true
+				AnswerButtons[2].Interactable = true
+				AnswerButtons[3].Interactable = true
+			end)
+		end)
 	end
 end
 

@@ -3,10 +3,6 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
 
--- Packages
-local Packages = ReplicatedStorage.Packages
-local TableUtil = require(Packages.TableUtil)
-
 -- References
 local LocalPlayer = Players.LocalPlayer
 
