@@ -29,13 +29,13 @@ function Chunk:New(startingPosition: Vector3, step: number, length: number)
 	local instance = {}
 	setmetatable(instance, Chunk)
 
-	instance._length = length
-	instance._trove = Trove.new()
+	instance.Length = length
+	instance.Trove = Trove.new()
 
 	-- Create a new instance of the Chunk model
-	instance._model = workspace.EndlessRunner.Chunk:Clone()
-	instance._model.Name = step
-	instance._model.Parent = workspace.EndlessRunner
+	instance.Model = workspace.EndlessRunner.Chunk:Clone()
+	instance.Model.Name = step
+	instance.Model.Parent = workspace.EndlessRunner
 
 	-- Move to position
 	instance:MoveToStepFromPosition(startingPosition, step)
@@ -60,11 +60,11 @@ function Chunk:New(startingPosition: Vector3, step: number, length: number)
 end
 
 function Chunk:MoveToStepFromPosition(referencePosition: Vector3, step: number)
-	self._model:PivotTo(CFrame.new(referencePosition + Vector3.new(0, 0, self._length * (step and step or 0))))
+	self.Model:PivotTo(CFrame.new(referencePosition + Vector3.new(0, 0, self.Length * (step and step or 0))))
 end
 
 function Chunk:GetModel()
-	return self._model
+	return self.Model
 end
 
 function Chunk:Populate()
@@ -74,7 +74,7 @@ function Chunk:Populate()
 			return
 		end
 
-		local spawnLocation: Attachment = self._model:FindFirstChild(lane .. "Path"):FindFirstChild(location)
+		local spawnLocation: Attachment = self.Model:FindFirstChild(lane .. "Path"):FindFirstChild(location)
 
 		if not spawnLocation then
 			warn("Center attachment not found in path: " .. lane .. "Path")
@@ -82,7 +82,7 @@ function Chunk:Populate()
 		end
 
 		local coin: Model = ReplicatedStorage.Assets.EndlessRunner.Obstacles.Coin
-		self._trove:Add(ObstacleModules["Coin"].New(coin, spawnLocation, self._model.Obstacles))
+		self.Trove:Add(ObstacleModules["Coin"].New(coin, spawnLocation, self.Model.Obstacles))
 	end
 
 	-- Populate the instance with obstacles
@@ -97,7 +97,7 @@ function Chunk:Populate()
 		local obstacles: { Model } = ReplicatedStorage.Assets.EndlessRunner.Obstacles:GetChildren()
 
 		for i = 1, #laneNames do
-			local path: BasePart = self._model:FindFirstChild(laneNames[i] .. "Path")
+			local path: BasePart = self.Model:FindFirstChild(laneNames[i] .. "Path")
 
 			if not path then
 				warn("Path not found for lane: " .. laneNames[i])
@@ -120,12 +120,12 @@ function Chunk:Populate()
 				continue
 			end
 
-			--print(`Path : {path.Name} | Location : {spawnLocation} | Chunk : {self._model.Name} | Obstacle : {type}`)
+			--print(`Path : {path.Name} | Location : {spawnLocation} | Chunk : {self.Model.Name} | Obstacle : {type}`)
 
-			local obstacle: table = ObstacleModules[type].New(randomObstacle, spawnLocation, self._model.Obstacles)
+			local obstacle: table = ObstacleModules[type].New(randomObstacle, spawnLocation, self.Model.Obstacles)
 
 			if obstacle then
-				self._trove:Add(obstacle)
+				self.Trove:Add(obstacle)
 			end
 			-- Can use this to spawn coins in the lanes with obstacles but might not be necessary
 			--[[
@@ -144,18 +144,18 @@ function Chunk:Populate()
 end
 
 function Chunk:Clear()
-	self._trove:Clean()
+	self.Trove:Clean()
 end
 
 function Chunk:Destroy()
 	self:Clear()
 
-	if self._model then
-		self._model:Destroy()
+	if self.Model then
+		self.Model:Destroy()
 	end
 
-	self._model = nil
-	self._length = nil
+	self.Model = nil
+	self.Length = nil
 end
 
 return Chunk

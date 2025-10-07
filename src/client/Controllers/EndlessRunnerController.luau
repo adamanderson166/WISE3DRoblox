@@ -85,7 +85,7 @@ function EndlessRunnerController:MoveChunks()
 		ChunksList[1]:GetModel():GetPivot().Position - Vector3.new(0, 0, CHUNK_RECYCLE_THRESHOLD)
 	).Z
 	-- Move chunks down the Z-axis and check for recycling
-	self._trove:Add(RunService.RenderStepped:Connect(function(deltaTime: number)
+	self.Trove:Add(RunService.RenderStepped:Connect(function(deltaTime: number)
 		if GameEnded then
 			return
 		end
@@ -126,7 +126,7 @@ function EndlessRunnerController:SpawnChunks()
 end
 
 function EndlessRunnerController:ListenToInput()
-	self._trove:Add(UserInputService.InputBegan:Connect(function(input: InputObject, gameProcessed: boolean)
+	self.Trove:Add(UserInputService.InputBegan:Connect(function(input: InputObject, gameProcessed: boolean)
 		if gameProcessed then
 			return
 		end
@@ -184,7 +184,7 @@ function EndlessRunnerController:SetupLanes()
 	character:PivotTo(TargetCFrame)
 
 	-- Update player position depending on the current lane and if targetCFrame is set
-	self._trove:Add(RunService.RenderStepped:Connect(function(deltaTime: number)
+	self.Trove:Add(RunService.RenderStepped:Connect(function(deltaTime: number)
 		if not TargetCFrame then
 			return
 		end
@@ -213,7 +213,7 @@ function EndlessRunnerController:TimeLoop()
 		Distance = tick(),
 	}
 
-	self._trove:Add(RunService.RenderStepped:Connect(function()
+	self.Trove:Add(RunService.RenderStepped:Connect(function()
 		if tick() - timers.Distance > 20 then
 			Multipliers.Distance += 1
 			Multipliers.Chunk += 3
@@ -240,7 +240,7 @@ function EndlessRunnerController:CalculateDistanceAndScore()
 	Score = 0
 	DistanceTraveled = 0
 
-	self._trove:Add(RunService.Heartbeat:Connect(function(deltaTime: number)
+	self.Trove:Add(RunService.Heartbeat:Connect(function(deltaTime: number)
 		DistanceTraveled += deltaTime * Multipliers.Distance
 		Score += deltaTime * Multipliers.Score
 
@@ -313,7 +313,7 @@ function EndlessRunnerController:StopGame(death: boolean)
 
 	CameraController:FocusCameraOnPlayer()
 
-	self._trove:Clean()
+	self.Trove:Clean()
 
 	for _, chunk: table in ipairs(ChunksList) do
 		chunk:Destroy()
@@ -355,7 +355,7 @@ function EndlessRunnerController:OnStart()
 end
 
 function EndlessRunnerController:OnInit()
-	self._trove = Trove.new()
+	self.Trove = Trove.new()
 end
 
 return EndlessRunnerController

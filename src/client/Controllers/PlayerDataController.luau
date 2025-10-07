@@ -11,11 +11,11 @@ local PlayerDataController = {}
 
 function PlayerDataController:GetReplica()
 	return Promise.new(function(resolve)
-		if self._replica then
-			resolve(self._replica)
+		if self.Replica then
+			resolve(self.Replica)
 		else
 			Replicator.ListenToNewReplica("PlayerData", function(replica)
-				self._replica = replica
+				self.Replica = replica
 				resolve(replica)
 			end)
 		end

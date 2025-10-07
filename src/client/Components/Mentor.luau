@@ -46,7 +46,7 @@ function Mentor:Start()
 		end)
 	end)
 
-	self._trove:Add(proximityPrompt)
+	self.Trove:Add(proximityPrompt)
 end
 
 return Mentor

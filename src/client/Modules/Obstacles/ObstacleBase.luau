@@ -15,13 +15,13 @@ ObstacleBase.__index = ObstacleBase
 function ObstacleBase:Init(obstacleModel: Model, position: Vector3, parent: Instance)
 	EndlessRunnerController = require(ReplicatedStorage.Client.Controllers.EndlessRunnerController)
 
-	self._trove = Trove.new()
+	self.Trove = Trove.new()
 
-	self._obstacle = obstacleModel:Clone()
-	self._obstacle.Parent = parent
-	self._obstacle:PivotTo(CFrame.new(position))
+	self.Obstacle = obstacleModel:Clone()
+	self.Obstacle.Parent = parent
+	self.Obstacle:PivotTo(CFrame.new(position))
 
-	self._trove:Add(self._obstacle)
+	self.Trove:Add(self.Obstacle)
 end
 
 function ObstacleBase:StopGame()
@@ -29,7 +29,7 @@ function ObstacleBase:StopGame()
 end
 
 function ObstacleBase:Clear()
-	self._trove:Clean()
+	self.Trove:Clean()
 end
 
 return ObstacleBase

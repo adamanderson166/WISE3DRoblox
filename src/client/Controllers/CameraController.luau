@@ -14,9 +14,9 @@ local InputController
 local CameraController = {}
 
 function CameraController:ClearCameraUpdateConnection()
-	if self._cameraConnection then
-		self._cameraConnection:Disconnect()
-		self._cameraConnection = nil
+	if self.CameraConnection then
+		self.CameraConnection:Disconnect()
+		self.CameraConnection = nil
 	end
 end
 
@@ -53,7 +53,7 @@ function CameraController:SetOrbitalCameraAroundObject(target: BasePart, distanc
 
 	updateCamera()
 
-	self._cameraConnection = RunService.RenderStepped:Connect(function(deltaTime)
+	self.CameraConnection = RunService.RenderStepped:Connect(function(deltaTime)
 		local delta: Vector2 = InputController:GetInputDelta()
 
 		if delta == lastDelta then
@@ -90,7 +90,7 @@ function CameraController:FollowTargetWithOffset(
 		end
 	end
 
-	self._cameraConnection = RunService.RenderStepped:Connect(function()
+	self.CameraConnection = RunService.RenderStepped:Connect(function()
 		updateCamera()
 	end)
 end
@@ -117,7 +117,7 @@ function CameraController:CircleAroundTarget(
 		Camera.CFrame = CFrame.new(newPos, targetPosition)
 	end
 
-	self._cameraConnection = RunService.RenderStepped:Connect(function(deltaTime: number)
+	self.CameraConnection = RunService.RenderStepped:Connect(function(deltaTime: number)
 		updateCamera(deltaTime)
 	end)
 end

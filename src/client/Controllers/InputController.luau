@@ -16,22 +16,22 @@ local TOUCH_SENSITIVITY = 0.002
 local InputController = {}
 
 function InputController:GetInputDelta()
-	return self._inputDelta
+	return self.InputDelta
 end
 
 function InputController:ListenToInputDeltaChange()
 	local lastTouchPosition: Vector2? = nil
 
-	self._trove:Add(UserInputService.InputChanged:Connect(function(input, gameProcessed)
+	self.Trove:Add(UserInputService.InputChanged:Connect(function(input, gameProcessed)
 		if gameProcessed then
 			return
 		end
 
-		self._inputDelta = Vector2.zero
+		self.InputDelta = Vector2.zero
 
 		if input.UserInputType == Enum.UserInputType.MouseMovement then
 			local mousDelta: Vector2 = UserInputService:GetMouseDelta()
-			self._inputDelta = Vector2.new(mousDelta.X * MOUSE_SENSITIVITY, mousDelta.Y * MOUSE_SENSITIVITY)
+			self.InputDelta = Vector2.new(mousDelta.X * MOUSE_SENSITIVITY, mousDelta.Y * MOUSE_SENSITIVITY)
 		elseif
 			input.UserInputType == Enum.UserInputType.Touch and input.UserInputState == Enum.UserInputState.Change
 		then
@@ -39,7 +39,7 @@ function InputController:ListenToInputDeltaChange()
 
 			if lastTouchPosition then
 				local diff = touchPosition - lastTouchPosition
-				self._inputDelta = Vector2.new(diff.X * TOUCH_SENSITIVITY, diff.Y * TOUCH_SENSITIVITY)
+				self.InputDelta = Vector2.new(diff.X * TOUCH_SENSITIVITY, diff.Y * TOUCH_SENSITIVITY)
 			end
 
 			lastTouchPosition = touchPosition
@@ -50,12 +50,12 @@ function InputController:ListenToInputDeltaChange()
 			local yInput = math.abs(stickPosition.Y) > GAMEPAD_DEAD_ZONE and stickPosition.Y or 0
 
 			if xInput ~= 0 or yInput ~= 0 then
-				self._inputDelta = Vector2.new(xInput * GAMEPAD_SENSITIVITY, yInput * GAMEPAD_SENSITIVITY)
+				self.InputDelta = Vector2.new(xInput * GAMEPAD_SENSITIVITY, yInput * GAMEPAD_SENSITIVITY)
 			end
 		end
 	end))
 
-	self._trove:Add(UserInputService.TouchStarted:Connect(function(input, gameProcessed)
+	self.Trove:Add(UserInputService.TouchStarted:Connect(function(input, gameProcessed)
 		if gameProcessed then
 			return
 		end
@@ -69,7 +69,7 @@ function InputController:ListenToInputBegan(
 	keys: { Enum.KeyCode },
 	callback: () -> ()
 )
-	self._trove:Add(UserInputService.InputBegan:Connect(function(input, gameProcessed)
+	self.Trove:Add(UserInputService.InputBegan:Connect(function(input, gameProcessed)
 		if gameProcessed then
 			return
 		end
@@ -91,7 +91,7 @@ function InputController:ListenToInputBegan(
 end
 
 function InputController:ClearInputListeners()
-	self._trove:Clean()
+	self.Trove:Clean()
 end
 
 function InputController:GetLastInputType()
@@ -104,8 +104,8 @@ function InputController:OnLastInputTypeChanged(callback: (Enum.UserInputType) -
 end
 
 function InputController:OnInit()
-	self._inputDelta = Vector2.zero
-	self._trove = Trove.new()
+	self.InputDelta = Vector2.zero
+	self.Trove = Trove.new()
 end
 
 return InputController

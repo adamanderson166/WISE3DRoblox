@@ -12,10 +12,10 @@ local PlayerModule
 local CharacterController = {}
 
 function CharacterController:StopAnimation()
-	if self._animation then
-		self._animation:Stop()
-		self._animation:Destroy()
-		self._animation = nil
+	if self.Animation then
+		self.Animation:Stop()
+		self.Animation:Destroy()
+		self.Animation = nil
 	end
 end
 
@@ -28,8 +28,8 @@ function CharacterController:PlayAnimation(animId: string, fadeValue: number, we
 	local animation: Animation = Instance.new("Animation")
 	animation.AnimationId = animId
 
-	self._animation = humanoid.Animator:LoadAnimation(animation)
-	self._animation:Play(fadeValue, weight, speed)
+	self.Animation = humanoid.Animator:LoadAnimation(animation)
+	self.Animation:Play(fadeValue, weight, speed)
 end
 
 function CharacterController:SetHumanoidState(humanoidState: Enum.HumanoidStateType)

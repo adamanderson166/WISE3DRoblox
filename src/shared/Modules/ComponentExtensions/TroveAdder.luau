@@ -9,11 +9,11 @@ local Trove = require(Packages.Trove)
 local TroveAdder = {}
 
 function TroveAdder.Constructing(component)
-	component._trove = Trove.new()
+	component.Trove = Trove.new()
 end
 
 function TroveAdder.Stopped(component)
-	component._trove:Destroy()
+	component.Trove:Destroy()
 end
 
 return TroveAdder
