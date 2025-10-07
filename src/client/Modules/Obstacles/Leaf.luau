@@ -12,13 +12,13 @@ function Leaf.New(leafModel: Model, location: Attachment, parent: Instance)
 	local instance = setmetatable({}, Leaf)
 	instance:Init(leafModel, location.WorldCFrame.Position, parent)
 
-	local base: BasePart = instance._obstacle:WaitForChild("Base", 5)
+	local base: BasePart = instance.Obstacle:WaitForChild("Base", 5)
 
 	if not base then
 		return
 	end
 
-	instance._trove:Add(base.Touched:Once(function(hit: BasePart)
+	instance.Trove:Add(base.Touched:Once(function(hit: BasePart)
 		local humanoid: Humanoid = hit:FindFirstAncestorOfClass("Model"):FindFirstChild("Humanoid")
 
 		if humanoid then

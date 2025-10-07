@@ -22,19 +22,19 @@ function Coin.New(coinModel: Model, location: Attachment, parent: Instance)
 	instance:Init(coinModel, location.WorldCFrame.Position + Vector3.new(0, 1.5, 0), parent)
 
 	-- Rotate the gear obstacle
-	instance._trove:Add(RunService.Heartbeat:Connect(function(deltaTime: number)
-		instance._obstacle:PivotTo(
-			instance._obstacle:GetPivot() * CFrame.Angles(0, math.rad(ROTATION_SPEED) * deltaTime, 0)
+	instance.Trove:Add(RunService.Heartbeat:Connect(function(deltaTime: number)
+		instance.Obstacle:PivotTo(
+			instance.Obstacle:GetPivot() * CFrame.Angles(0, math.rad(ROTATION_SPEED) * deltaTime, 0)
 		)
 	end))
 
-	local base: BasePart = instance._obstacle:WaitForChild("Base", 5)
+	local base: BasePart = instance.Obstacle:WaitForChild("Base", 5)
 
 	if not base then
 		return
 	end
 
-	instance._trove:Add(base.Touched:Once(function(hit: BasePart)
+	instance.Trove:Add(base.Touched:Once(function(hit: BasePart)
 		local humanoid: Humanoid = hit:FindFirstAncestorOfClass("Model"):FindFirstChild("Humanoid")
 
 		if humanoid then

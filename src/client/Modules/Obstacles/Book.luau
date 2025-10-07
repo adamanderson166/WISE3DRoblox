@@ -25,11 +25,11 @@ function Book.New(bookModel: Model, location: Attachment, parent: Instance)
 	local randomOffset: number = math.random() * 2 * math.pi -- Random offset for the hover effect
 
 	-- Hover the book obstacle
-	instance._trove:Add(RunService.Heartbeat:Connect(function(deltaTime: number)
+	instance.Trove:Add(RunService.Heartbeat:Connect(function(deltaTime: number)
 		time = time + deltaTime
 
 		local offsetY: number = math.sin((time * HOVER_SPEED) + randomOffset) * HOVER_HEIGHT
-		local currentPosition: Vector3 = instance._obstacle:GetPivot().Position
+		local currentPosition: Vector3 = instance.Obstacle:GetPivot().Position
 
 		local targetCFrame: CFrame = CFrame.new(
 			Vector3.new(
@@ -39,16 +39,16 @@ function Book.New(bookModel: Model, location: Attachment, parent: Instance)
 			)
 		)
 
-		instance._obstacle:PivotTo(targetCFrame * CFrame.new(Vector3.new(0, offsetY, 0)))
+		instance.Obstacle:PivotTo(targetCFrame * CFrame.new(Vector3.new(0, offsetY, 0)))
 	end))
 
-	local base: BasePart = instance._obstacle:WaitForChild("Base", 5)
+	local base: BasePart = instance.Obstacle:WaitForChild("Base", 5)
 
 	if not base then
 		return
 	end
 
-	instance._trove:Add(base.Touched:Once(function(hit: BasePart)
+	instance.Trove:Add(base.Touched:Once(function(hit: BasePart)
 		local humanoid: Humanoid = hit:FindFirstAncestorOfClass("Model"):FindFirstChild("Humanoid")
 
 		if humanoid then
